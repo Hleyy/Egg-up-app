@@ -34,6 +34,7 @@ export function PauseScreen() {
       <p className="text-center font-display text-4xl font-bold tabular-nums">{formatClock(g.remaining)}</p>
       <div className="flex flex-1 flex-col justify-center gap-2">
         <Button onClick={() => { g.resume(); navigate('/game', { replace: true }) }}>{t('pause.resume')}</Button>
+        <Button variant="secondary" onClick={() => navigate('/rules')}>{t('home.howToPlay')}</Button>
         <Button variant="secondary" onClick={() => navigate('/settings')}>{t('pause.settings')}</Button>
         <Button variant="secondary" onClick={restart}>{t('pause.restart')}</Button>
         <Button variant="danger" onClick={() => setConfirmQuit(true)}>{t('pause.quit')}</Button>

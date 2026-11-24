@@ -16,6 +16,7 @@ export const fr: Messages = {
     resumeDetail: '{red} {redScore} – {blueScore} {blue}',
     settings: 'Paramètres',
     howToPlay: 'Comment jouer',
+    history: 'Historique',
     replaceConfirm: 'Une partie est en cours. En commencer une nouvelle et la perdre ?',
   },
   setup: {
@@ -64,6 +65,25 @@ export const fr: Messages = {
     restart: 'Recommencer avec les mêmes équipes',
     quit: 'Quitter la partie',
     quitConfirm: 'Quitter cette partie ? Elle sera perdue.',
+  },
+  rules: {
+    title: 'Comment jouer',
+    r1: 'Formez deux équipes, rouge et bleue. Chaque équipe a un œuf à faire éclore.',
+    r2: "À votre tour, lancez le dé dans l'app et avancez votre pion.",
+    r3: 'Piochez une carte dans la pile de votre case : Apprendre, Comprendre ou Appliquer. Un autre joueur lit la question.',
+    r4: "Bonne réponse : +{points} points, plus le bonus de la carte s'il y en a un. Ensuite, l'autre équipe joue.",
+    r5: "Les cartes Malus visent l'autre équipe. Vous pouvez les jouer à tout moment.",
+    r6: 'Votre œuf grandit avec votre score. Pour le faire éclore, il faut {goal} points et votre pion au printemps.',
+    r7: "Si le temps est écoulé avant qu'un œuf éclose, personne ne gagne.",
+  },
+  history: {
+    title: 'Historique',
+    empty: 'Aucune partie terminée pour le moment.',
+    winner: '{team} a gagné',
+    timeout: 'Temps écoulé, personne n’a gagné',
+    played: 'Jouée en {time}',
+    clear: "Effacer l'historique",
+    clearConfirm: 'Supprimer toutes les parties enregistrées ?',
   },
   settings: {
     title: 'Paramètres',

@@ -31,7 +31,11 @@ export function HomeScreen() {
         <Button variant={inProgress ? 'secondary' : 'primary'} onClick={() => (inProgress ? setConfirmNew(true) : navigate('/setup'))}>
           {t('home.newGame')}
         </Button>
-        <Button variant="ghost" onClick={() => navigate('/settings')}>{t('home.settings')}</Button>
+        <div className="grid grid-cols-3 gap-2">
+          <Button variant="ghost" onClick={() => navigate('/rules')}>{t('home.howToPlay')}</Button>
+          <Button variant="ghost" onClick={() => navigate('/history')}>{t('home.history')}</Button>
+          <Button variant="ghost" onClick={() => navigate('/settings')}>{t('home.settings')}</Button>
+        </div>
       </div>
       <ConfirmDialog
         open={confirmNew}

@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { createGame, gameReducer, remainingMs, type GameAction } from './reducer'
 import { loadGame, saveGame } from './storage'
+import { addRecord, loadHistory, saveHistory, toRecord, type GameRecord } from './history'
 import { rollDie } from './rules'
 import type { CardEffect, GameSetup, GameState, MalusEffect, TeamId } from './types'
 
@@ -18,6 +19,8 @@ interface GameApi {
   game: GameState | null
   remaining: number
   canUndo: boolean
+  records: GameRecord[]
+  clearRecords: () => void
   newGame: (setup: GameSetup) => void
   clearGame: () => void
   undo: () => void
@@ -48,6 +51,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const game = store.game
 
   useEffect(() => saveGame(game), [game])
+
+  const [records, setRecords] = useState<GameRecord[]>(loadHistory)
+  const finishedRecord = game ? toRecord(game) : null
+  if (finishedRecord && !records.some((r) => r.id === finishedRecord.id)) setRecords(addRecord(records, finishedRecord))
+  useEffect(() => saveHistory(records), [records])
 
   const dispatch = useCallback((command: GameCommand) => {
     setStore((s) => {
@@ -87,6 +95,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       game,
       remaining,
       canUndo: store.history.length > 0 && game?.status !== 'finished',
+      records,
+      clearRecords: () => setRecords([]),
       newGame: (setup) => setStore({ game: createGame(setup, Date.now()), history: [] }),
       clearGame: () => setStore({ game: null, history: [] }),
       undo: () =>
@@ -112,7 +122,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       resume: () => dispatch({ type: 'resume' }),
       abandon: () => dispatch({ type: 'abandon' }),
     }
-  }, [game, now, store.history.length, dispatch])
+  }, [game, now, store.history.length, dispatch, records])
 
   return <GameContext.Provider value={api}>{children}</GameContext.Provider>
 }

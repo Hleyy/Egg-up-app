@@ -6,6 +6,7 @@ import { en } from '../i18n/en'
 import { fr } from '../i18n/fr'
 import { translate } from '../settings/SettingsProvider'
 import { SQUARES, squareTypeAt } from '../data/board'
+import { addRecord, HISTORY_LIMIT, toRecord } from './history'
 
 const T0 = 1_000_000
 const setup = { teamNames: { red: 'Foxes', blue: 'Owls' }, firstTeam: 'red' as const, durationMinutes: 30 }
@@ -189,5 +190,28 @@ describe('board squares', () => {
     const g = run(start(), { type: 'roll', value: 5, now: T0 + 1 })
     expect(squareTypeAt(g.teams.red.distance)).toBe(SQUARES[5])
     expect(squareTypeAt(40)).toBe(SQUARES[0])
+  })
+})
+
+describe('history', () => {
+  it('records finished games once, newest first, but not abandoned ones', () => {
+    const won = run({ ...start(), teams: { ...start().teams, red: { ...start().teams.red, score: 38, distance: 35 } } }, { type: 'answer', correct: true, now: T0 + 60_000 })
+    const record = toRecord(won)
+    expect(record?.winner).toBe('red')
+    expect(record?.playedMs).toBe(60_000)
+    expect(toRecord(start())).toBeNull()
+    expect(toRecord(run(start(), { type: 'abandon', now: T0 + 1 }))).toBeNull()
+    const timeout = toRecord(run(createGame(setup, T0, 'other'), { type: 'tick', now: T0 + 31 * 60_000 }))!
+    let list = addRecord([], record!)
+    list = addRecord(list, record!)
+    list = addRecord(list, timeout)
+    expect(list.map((r) => r.id)).toEqual(['other', 'test'])
+    expect(list[0].winner).toBeNull()
+  })
+  it('keeps at most the limit', () => {
+    let list = [] as ReturnType<typeof addRecord>
+    const base = toRecord(run(start(), { type: 'tick', now: T0 + 31 * 60_000 }))!
+    for (let i = 0; i < HISTORY_LIMIT + 5; i++) list = addRecord(list, { ...base, id: String(i) })
+    expect(list).toHaveLength(HISTORY_LIMIT)
   })
 })

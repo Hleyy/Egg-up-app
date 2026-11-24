@@ -10,6 +10,7 @@ import { useGame } from '../game/GameProvider'
 import { CARD_BONUS_POINTS, GOAL_POINTS, POINTS_PER_CORRECT_ANSWER, TEAM_IDS, eggStageOf, lapOf, otherTeam, seasonOf, squareOf } from '../game/rules'
 import type { GameState, TeamId } from '../game/types'
 import { useSettings } from '../settings/SettingsProvider'
+import { useWakeLock } from '../game/useWakeLock'
 
 export function GameScreen() {
   const g = useGame()
@@ -18,6 +19,8 @@ export function GameScreen() {
   const [malusOpen, setMalusOpen] = useState(false)
   const [bonusPick, setBonusPick] = useState<{ team: TeamId | null; value: number }>({ team: null, value: 0 })
   const [corrections, setCorrections] = useState(false)
+
+  useWakeLock(g.game?.status === 'playing')
 
   const finished = g.game?.status === 'finished'
   useEffect(() => {

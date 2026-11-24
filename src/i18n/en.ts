@@ -14,6 +14,7 @@ export const en = {
     resumeDetail: '{red} {redScore} – {blueScore} {blue}',
     settings: 'Settings',
     howToPlay: 'How to play',
+    history: 'History',
     replaceConfirm: 'A game is in progress. Start a new one and lose it?',
   },
   setup: {
@@ -62,6 +63,25 @@ export const en = {
     restart: 'Restart with same teams',
     quit: 'Quit game',
     quitConfirm: 'Quit this game? It will be lost.',
+  },
+  rules: {
+    title: 'How to play',
+    r1: 'Split into two teams, red and blue. Each team has an egg to hatch.',
+    r2: 'On your turn, roll the die in the app and move your pawn.',
+    r3: 'Draw a card from the pile that matches your square: Learn, Understand or Apply. Another player reads the question.',
+    r4: 'Right answer: +{points} points, plus the card bonus if there is one. Then the other team plays.',
+    r5: 'Malus cards hit the other team. You can play them at any time.',
+    r6: 'Your egg grows with your score. To hatch it, you need {goal} points and your pawn in Spring.',
+    r7: 'If the timer reaches zero before an egg hatches, nobody wins.',
+  },
+  history: {
+    title: 'History',
+    empty: 'No finished games yet.',
+    winner: '{team} won',
+    timeout: "Time's up, nobody won",
+    played: 'Played {time}',
+    clear: 'Clear history',
+    clearConfirm: 'Delete all saved games?',
   },
   settings: {
     title: 'Settings',
