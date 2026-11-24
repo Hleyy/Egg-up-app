@@ -34,6 +34,8 @@ export const en = {
     tapToGiveTurn: 'Tap a team to give it the turn',
     roll: 'Roll the die',
     rolled: 'You rolled {n}',
+    draw: 'Draw a card: {type}',
+    startSquare: 'Start square: no card',
     square: 'Square {n}',
     lap: 'Lap {n}',
     correct: 'Correct (+{n})',

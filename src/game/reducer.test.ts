@@ -5,6 +5,7 @@ import type { GameState } from './types'
 import { en } from '../i18n/en'
 import { fr } from '../i18n/fr'
 import { translate } from '../settings/SettingsProvider'
+import { SQUARES, squareTypeAt } from '../data/board'
 
 const T0 = 1_000_000
 const setup = { teamNames: { red: 'Foxes', blue: 'Owls' }, firstTeam: 'red' as const, durationMinutes: 30 }
@@ -179,5 +180,14 @@ describe('saving and i18n', () => {
     const keys = (o: object, p = ''): string[] =>
       Object.entries(o).flatMap(([k, v]) => (typeof v === 'string' ? [p + k] : keys(v as object, `${p}${k}.`)))
     expect(keys(fr).sort()).toEqual(keys(en).sort())
+  })
+})
+
+describe('board squares', () => {
+  it('has one type per square and picks the card from the landing square', () => {
+    expect(SQUARES).toHaveLength(40)
+    const g = run(start(), { type: 'roll', value: 5, now: T0 + 1 })
+    expect(squareTypeAt(g.teams.red.distance)).toBe(SQUARES[5])
+    expect(squareTypeAt(40)).toBe(SQUARES[0])
   })
 })

@@ -36,6 +36,8 @@ export const fr: Messages = {
     tapToGiveTurn: "Touchez une équipe pour lui donner la main",
     roll: 'Lancer le dé',
     rolled: 'Vous avez fait {n}',
+    draw: 'Piochez une carte {type}',
+    startSquare: 'Case départ : pas de carte',
     square: 'Case {n}',
     lap: 'Tour {n}',
     correct: 'Bonne réponse (+{n})',

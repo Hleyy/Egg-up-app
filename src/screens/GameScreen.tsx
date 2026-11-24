@@ -5,6 +5,7 @@ import { Egg } from '../components/Egg'
 import { LanguageToggle } from '../components/LanguageToggle'
 import { MalusOverlay } from '../components/MalusOverlay'
 import { cardsOfType } from '../data/cards'
+import { squareTypeAt } from '../data/board'
 import { useGame } from '../game/GameProvider'
 import { CARD_BONUS_POINTS, GOAL_POINTS, POINTS_PER_CORRECT_ANSWER, TEAM_IDS, eggStageOf, lapOf, otherTeam, seasonOf, squareOf } from '../game/rules'
 import type { GameState, TeamId } from '../game/types'
@@ -61,6 +62,7 @@ export function GameScreen() {
         ) : (
           <div className="rounded-ui bg-surface-muted py-4 font-display text-3xl font-bold" aria-live="polite">
             {t('game.rolled', { n: game.turn.roll })}
+            <DrawHint distance={game.teams[active].distance} />
           </div>
         )}
         <div className="space-y-1 text-left">
@@ -160,3 +162,13 @@ function MalusSheet({ game, onClose }: { game: GameState; onClose: () => void })
   )
 }
 
+
+function DrawHint({ distance }: { distance: number }) {
+  const { t } = useSettings()
+  const type = squareTypeAt(distance)
+  return (
+    <p className="mt-1 font-body text-base font-semibold" data-square-type={type}>
+      {type === 'start' ? t('game.startSquare') : t('game.draw', { type: t(`cardType.${type}`) })}
+    </p>
+  )
+}
