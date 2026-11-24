@@ -117,6 +117,27 @@ describe('pause', () => {
   })
 })
 
+describe('bonus', () => {
+  it('adds bonus points to the +2', () => {
+    const g = run(start(), { type: 'answer', correct: true, bonus: { scoreDelta: 1 }, now: T0 + 1 })
+    expect(g.teams.red.score).toBe(3)
+    expect(g.turn.team).toBe('blue')
+  })
+  it('moves the team forward', () => {
+    const g = run(start(), { type: 'answer', correct: true, bonus: { moveDelta: 2 }, now: T0 + 1 })
+    expect(g.teams.red.distance).toBe(2)
+  })
+  it('keeps the turn with a replay bonus', () => {
+    const g = run(start(), { type: 'roll', value: 3, now: T0 + 1 }, { type: 'answer', correct: true, bonus: { extraTurn: true }, now: T0 + 2 })
+    expect(g.turn.team).toBe('red')
+    expect(g.turn.roll).toBeNull()
+  })
+  it('ignores the bonus on a wrong answer', () => {
+    const g = run(start(), { type: 'answer', correct: false, bonus: { scoreDelta: 5 }, now: T0 + 1 })
+    expect(g.teams.red.score).toBe(0)
+  })
+})
+
 describe('malus', () => {
   it('targets the other team and applies its effect', () => {
     let g = start()

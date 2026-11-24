@@ -23,11 +23,14 @@ export interface Timer {
   runningSince: number | null
 }
 
-export interface MalusEffect {
+export interface CardEffect {
   scoreDelta?: number
   moveDelta?: number
   skipTurn?: boolean
+  extraTurn?: boolean
 }
+
+export type MalusEffect = CardEffect
 
 export interface Card {
   id: string
@@ -35,14 +38,15 @@ export interface Card {
   season?: Season
   question: { en: string; fr: string }
   answer: { en: string; fr: string }
-  effect?: MalusEffect
+  effect?: CardEffect
+  bonus?: CardEffect
 }
 
 export type GameEvent =
   | { kind: 'start'; at: number; team: TeamId }
   | { kind: 'roll'; at: number; team: TeamId; value: number }
   | { kind: 'move'; at: number; team: TeamId; delta: number }
-  | { kind: 'answer'; at: number; team: TeamId; correct: boolean; points: number }
+  | { kind: 'answer'; at: number; team: TeamId; correct: boolean; points: number; bonus: CardEffect | null }
   | { kind: 'score'; at: number; team: TeamId; delta: number }
   | { kind: 'turn'; at: number; team: TeamId }
   | { kind: 'malus'; at: number; by: TeamId; target: TeamId; cardId: string | null; effect: MalusEffect | null }

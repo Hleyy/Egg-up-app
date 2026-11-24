@@ -5,12 +5,12 @@ import {
   otherTeam,
   TEAM_IDS,
 } from './rules'
-import type { GameEvent, GameSetup, GameState, MalusEffect, TeamId, Timer } from './types'
+import type { CardEffect, GameEvent, GameSetup, GameState, MalusEffect, TeamId, Timer } from './types'
 
 export type GameAction =
   | { type: 'roll'; value: number; now: number }
   | { type: 'move'; team: TeamId; delta: number; now: number }
-  | { type: 'answer'; correct: boolean; now: number }
+  | { type: 'answer'; correct: boolean; bonus?: CardEffect | null; now: number }
   | { type: 'adjustScore'; team: TeamId; delta: number; now: number }
   | { type: 'endTurn'; now: number }
   | { type: 'setTurn'; team: TeamId; now: number }
@@ -97,11 +97,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     case 'answer': {
       const team = state.turn.team
-      const points = action.correct ? POINTS_PER_CORRECT_ANSWER : 0
-      let next = updateTeam(state, team, (t) => ({ ...t, score: t.score + points }))
-      next = log(next, { kind: 'answer', at: action.now, team, correct: action.correct, points })
+      const bonus = action.correct ? (action.bonus ?? null) : null
+      const points = action.correct ? POINTS_PER_CORRECT_ANSWER + Math.trunc(bonus?.scoreDelta ?? 0) : 0
+      let next = updateTeam(state, team, (t) => ({ ...t, score: Math.max(0, t.score + points) }))
+      if (bonus?.moveDelta) next = moveTeam(next, team, Math.trunc(bonus.moveDelta), action.now, false)
+      next = log(next, { kind: 'answer', at: action.now, team, correct: action.correct, points, bonus })
       next = checkHatch(next, action.now)
-      return next.status === 'finished' ? next : passTurn(next, action.now)
+      if (next.status === 'finished') return next
+      if (bonus?.extraTurn) return log({ ...next, turn: { team, roll: null } }, { kind: 'turn', at: action.now, team })
+      return passTurn(next, action.now)
     }
 
     case 'adjustScore': {

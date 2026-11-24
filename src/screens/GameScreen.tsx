@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { Button, Card, Screen, Stepper, formatClock } from '../components/ui'
+import { Button, Card, Screen, Segmented, Stepper, formatClock } from '../components/ui'
 import { Egg } from '../components/Egg'
 import { LanguageToggle } from '../components/LanguageToggle'
 import { MalusOverlay } from '../components/MalusOverlay'
 import { cardsOfType } from '../data/cards'
 import { useGame } from '../game/GameProvider'
-import { GOAL_POINTS, POINTS_PER_CORRECT_ANSWER, TEAM_IDS, eggStageOf, lapOf, otherTeam, seasonOf, squareOf } from '../game/rules'
+import { CARD_BONUS_POINTS, GOAL_POINTS, POINTS_PER_CORRECT_ANSWER, TEAM_IDS, eggStageOf, lapOf, otherTeam, seasonOf, squareOf } from '../game/rules'
 import type { GameState, TeamId } from '../game/types'
 import { useSettings } from '../settings/SettingsProvider'
 
@@ -15,6 +15,7 @@ export function GameScreen() {
   const { t } = useSettings()
   const navigate = useNavigate()
   const [malusOpen, setMalusOpen] = useState(false)
+  const [bonusPick, setBonusPick] = useState<{ team: TeamId | null; value: number }>({ team: null, value: 0 })
   const [corrections, setCorrections] = useState(false)
 
   const finished = g.game?.status === 'finished'
@@ -26,6 +27,8 @@ export function GameScreen() {
   if (g.game.status === 'paused') return <Navigate to="/pause" replace />
   const game = g.game
   const active = game.turn.team
+  const bonus = bonusPick.team === active ? bonusPick.value : 0
+  const setBonus = (value: number) => setBonusPick({ team: active, value })
 
   return (
     <Screen
@@ -60,11 +63,22 @@ export function GameScreen() {
             {t('game.rolled', { n: game.turn.roll })}
           </div>
         )}
-        <div className="grid grid-cols-2 gap-2">
-          <Button onClick={() => g.answer(true)}>{t('game.correct', { n: POINTS_PER_CORRECT_ANSWER })}</Button>
-          <Button variant="secondary" onClick={() => g.answer(false)}>{t('game.wrong')}</Button>
+        <div className="space-y-1 text-left">
+          <span className="text-xs text-ink-muted">{t('game.cardBonus')}</span>
+          <Segmented<number>
+            label={t('game.cardBonus')}
+            value={bonus}
+            onChange={setBonus}
+            options={CARD_BONUS_POINTS.map((n) => ({ value: n, label: n === 0 ? t('game.noBonus') : `+${n}` }))}
+          />
         </div>
-        <Button variant="secondary" className="w-full" onClick={g.endTurn}>{t('game.endTurn')}</Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button onClick={() => { g.answer(true, bonus ? { scoreDelta: bonus } : null); setBonus(0) }}>
+            {t('game.correct', { n: POINTS_PER_CORRECT_ANSWER + bonus })}
+          </Button>
+          <Button variant="secondary" onClick={() => { g.answer(false); setBonus(0) }}>{t('game.wrong')}</Button>
+        </div>
+        <Button variant="secondary" className="w-full" onClick={() => { g.endTurn(); setBonus(0) }}>{t('game.endTurn')}</Button>
       </Card>
 
       <div className="grid grid-cols-3 gap-2">
@@ -145,3 +159,4 @@ function MalusSheet({ game, onClose }: { game: GameState; onClose: () => void })
     </div>
   )
 }
+

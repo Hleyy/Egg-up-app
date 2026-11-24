@@ -38,6 +38,8 @@ export const en = {
     lap: 'Lap {n}',
     correct: 'Correct (+{n})',
     wrong: 'Wrong',
+    cardBonus: 'Card bonus',
+    noBonus: 'No',
     endTurn: 'End turn',
     playMalus: 'Play a malus',
     malusBy: '{team} plays a malus!',

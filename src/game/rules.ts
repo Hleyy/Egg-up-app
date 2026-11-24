@@ -20,6 +20,8 @@ export const EGG_STAGE_THRESHOLDS: { stage: Exclude<EggStage, 'hatched'>; from: 
   { stage: 'peek', from: 30 },
 ]
 
+export const CARD_BONUS_POINTS = [0, 1, 2, 3]
+
 export const TEAM_IDS: TeamId[] = ['red', 'blue']
 
 export function otherTeam(team: TeamId): TeamId {

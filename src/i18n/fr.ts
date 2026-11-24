@@ -40,6 +40,8 @@ export const fr: Messages = {
     lap: 'Tour {n}',
     correct: 'Bonne réponse (+{n})',
     wrong: 'Mauvaise réponse',
+    cardBonus: 'Bonus de la carte',
+    noBonus: 'Non',
     endTurn: 'Fin du tour',
     playMalus: 'Jouer un malus',
     malusBy: '{team} joue un malus !',

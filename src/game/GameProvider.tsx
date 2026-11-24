@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { createGame, gameReducer, remainingMs, type GameAction } from './reducer'
 import { loadGame, saveGame } from './storage'
 import { rollDie } from './rules'
-import type { GameSetup, GameState, MalusEffect, TeamId } from './types'
+import type { CardEffect, GameSetup, GameState, MalusEffect, TeamId } from './types'
 
 const UNDO_LIMIT = 20
 
@@ -23,7 +23,7 @@ interface GameApi {
   undo: () => void
   dispatch: (command: GameCommand) => void
   roll: () => number | null
-  answer: (correct: boolean) => void
+  answer: (correct: boolean, bonus?: CardEffect | null) => void
   endTurn: () => void
   setTurn: (team: TeamId) => void
   move: (team: TeamId, delta: number) => void
@@ -102,7 +102,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         dispatch({ type: 'roll', value })
         return value
       },
-      answer: (correct) => dispatch({ type: 'answer', correct }),
+      answer: (correct, bonus) => dispatch({ type: 'answer', correct, bonus }),
       endTurn: () => dispatch({ type: 'endTurn' }),
       setTurn: (team) => dispatch({ type: 'setTurn', team }),
       move: (team, delta) => dispatch({ type: 'move', team, delta }),
