@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "cards": [
+    {
+      "id": "learn-001",
+      "type": "learn",
+      "season": "summer",
+      "question": {
+        "en": "What does 'Green IT' mean?",
+        "fr": "Que veut dire « Green IT » ?"
+      },
+      "answer": {
+        "en": "Using digital technology in a way that is better for the planet.",
+        "fr": "Utiliser le numérique d'une façon plus respectueuse de la planète."
+      }
+    },
+    {
+      "id": "understand-001",
+      "type": "understand",
+      "season": "autumn",
+      "question": {
+        "en": "Why does streaming a video use energy?",
+        "fr": "Pourquoi regarder une vidéo en streaming consomme-t-il de l'énergie ?"
+      },
+      "answer": {
+        "en": "Data centres and networks need electricity to send the video.",
+        "fr": "Les data centers et les réseaux ont besoin d'électricité pour envoyer la vidéo."
+      }
+    },
+    {
+      "id": "apply-001",
+      "type": "apply",
+      "season": "winter",
+      "question": {
+        "en": "Name one way to make your phone last longer.",
+        "fr": "Cite une façon de faire durer ton téléphone plus longtemps."
+      },
+      "answer": {
+        "en": "Use a case, repair it, or don't change it every year.",
+        "fr": "Mettre une coque, le réparer, ou ne pas le changer chaque année."
+      }
+    },
+    {
+      "id": "malus-001",
+      "type": "malus",
+      "question": {
+        "en": "Power cut! The other team loses 2 points.",
+        "fr": "Coupure de courant ! L'autre équipe perd 2 points."
+      },
+      "answer": {
+        "en": "",
+        "fr": ""
+      },
+      "effect": {
+        "scoreDelta": -2
+      }
+    },
+    {
+      "id": "malus-002",
+      "type": "malus",
+      "question": {
+        "en": "E-waste pile! The other team goes back 3 squares.",
+        "fr": "Tas de déchets électroniques ! L'autre équipe recule de 3 cases."
+      },
+      "answer": {
+        "en": "",
+        "fr": ""
+      },
+      "effect": {
+        "moveDelta": -3
+      }
+    },
+    {
+      "id": "malus-003",
+      "type": "malus",
+      "question": {
+        "en": "Battery empty! The other team skips its next turn.",
+        "fr": "Batterie vide ! L'autre équipe passe son prochain tour."
+      },
+      "answer": {
+        "en": "",
+        "fr": ""
+      },
+      "effect": {
+        "skipTurn": true
+      }
+    }
+  ]
+}

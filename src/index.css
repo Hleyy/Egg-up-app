@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f4f4f5;
+  --color-surface: #ffffff;
+  --color-surface-muted: #e4e4e7;
+  --color-ink: #18181b;
+  --color-ink-muted: #71717a;
+  --color-line: #d4d4d8;
+  --color-accent: #3f3f46;
+  --color-accent-ink: #ffffff;
+  --color-danger: #b91c1c;
+
+  --color-team-red: #e06a5a;
+  --color-team-blue: #5b8fd1;
+
+  --color-season-summer: #f6c453;
+  --color-season-autumn: #d9693b;
+  --color-season-winter: #9cc9e3;
+  --color-season-spring: #a8d58a;
+
+  --color-card-learn: #a1a1aa;
+  --color-card-understand: #a1a1aa;
+  --color-card-apply: #a1a1aa;
+  --color-card-malus: #a1a1aa;
+
+  --font-display: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+
+  --radius-ui: 0.75rem;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+button { touch-action: manipulation; }
