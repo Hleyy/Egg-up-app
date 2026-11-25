@@ -2,6 +2,9 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vite'
+import vercel from './vercel.json' with { type: 'json' }
+
+const headers = Object.fromEntries(vercel.headers[0].headers.filter((h) => h.key !== 'Strict-Transport-Security').map((h) => [h.key, h.value]))
 
 export default defineConfig({
   plugins: [
@@ -17,7 +20,7 @@ export default defineConfig({
         lang: 'en',
         start_url: '/',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'any',
         background_color: '#F3E6CF',
         theme_color: '#F3E6CF',
         icons: [
@@ -27,12 +30,20 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,woff2,otf}'],
+        globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2,otf,wasm,riv}'],
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         navigateFallback: '/index.html',
       },
     }),
   ],
+  preview: {
+    headers,
+  },
+  build: {
+    chunkSizeWarningLimit: 1200,
+  },
   test: {
     environment: 'node',
+    include: ['src/**/*.test.ts'],
   },
 } as never)

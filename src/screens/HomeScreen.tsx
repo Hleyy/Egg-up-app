@@ -1,53 +1,91 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, ConfirmDialog, Screen } from '../components/ui'
-import { LanguageToggle } from '../components/LanguageToggle'
-import { useGame } from '../game/GameProvider'
-import { useSettings } from '../settings/SettingsProvider'
+import { BookIcon, ChevronIcon, ClockIcon, GearIcon, PlayIcon, QrIcon } from '../components/icons'
+import { Btn, ConfirmDialog, Flags, IconBtn, Page, Scene, TopBar } from '../components/ui'
+import { currentPlayer, pawnOf } from '../game/selectors'
+import { seasonOf } from '../game/rules'
+import { useGame } from '../game/useGame'
+import { useSettings } from '../settings/useSettings'
 
 export function HomeScreen() {
-  const { game, clearGame } = useGame()
   const { t } = useSettings()
+  const { game, clearGame } = useGame()
   const navigate = useNavigate()
-  const [confirmNew, setConfirmNew] = useState(false)
-  const inProgress = game && game.status !== 'finished'
+  const [confirm, setConfirm] = useState(false)
+  const inProgress = game && game.status !== 'finished' ? game : null
+  const season = inProgress ? seasonOf(pawnOf(inProgress, currentPlayer(inProgress)).distance) : 'spring'
+
+  const startNew = () => {
+    if (inProgress) setConfirm(true)
+    else navigate('/setup')
+  }
 
   return (
-    <Screen actions={<LanguageToggle />}>
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
-        <div className="size-32 rounded-full bg-surface-muted" aria-hidden />
-        <h1 className="font-display text-4xl font-bold">{t('app.name')}</h1>
-        <p className="text-ink-muted">{t('app.tagline')}</p>
-      </div>
-      <div className="flex flex-col gap-2">
-        {inProgress && (
-          <Button onClick={() => navigate(game.status === 'paused' ? '/pause' : '/game')}>
-            {t('home.resume')}
-            <span className="block text-xs font-normal opacity-80">
-              {t('home.resumeDetail', { red: game.teams.red.name, redScore: game.teams.red.score, blue: game.teams.blue.name, blueScore: game.teams.blue.score })}
-            </span>
-          </Button>
-        )}
-        <Button variant={inProgress ? 'secondary' : 'primary'} onClick={() => (inProgress ? setConfirmNew(true) : navigate('/setup'))}>
-          {t('home.newGame')}
-        </Button>
-        <div className="grid grid-cols-3 gap-2">
-          <Button variant="ghost" onClick={() => navigate('/rules')}>{t('home.howToPlay')}</Button>
-          <Button variant="ghost" onClick={() => navigate('/history')}>{t('home.history')}</Button>
-          <Button variant="ghost" onClick={() => navigate('/settings')}>{t('home.settings')}</Button>
+    <Page>
+      <Scene season={season} />
+      <TopBar
+        left={
+          <div className="flex gap-2">
+            <IconBtn label={t('home.settings')} onClick={() => navigate('/settings')}>
+              <GearIcon />
+            </IconBtn>
+            <IconBtn label={t('share.open')} onClick={() => navigate('/share')}>
+              <QrIcon />
+            </IconBtn>
+          </div>
+        }
+        right={<Flags />}
+      />
+      <div className="flex flex-1 flex-col justify-center pb-[4vh]">
+        <h1 className="anim-pop relative mx-auto w-[86%] max-w-[380px]">
+          <span className="logo-glow pointer-events-none absolute inset-[8%_4%] rounded-full" aria-hidden="true" />
+          <img src="/brand/logo.svg" alt={t('app.name')} className="logo-float relative block w-full" />
+        </h1>
+        <div className="mt-[clamp(20px,5vh,44px)] flex flex-col gap-3">
+          {inProgress && (
+            <button
+              type="button"
+              onClick={() => navigate(inProgress.status === 'paused' ? '/pause' : '/game')}
+              className="tile stagger flex items-center gap-4 px-4 py-4 text-left active:translate-y-1 active:shadow-[inset_0_0_0_2px_#e5e5e5]"
+            >
+              <span className="bg-green grid size-11 shrink-0 place-items-center rounded-full text-white shadow-[0_3px_0_#58A700] [&>svg]:size-5 [&>svg]:translate-x-[1px]">
+                <PlayIcon />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="kicker text-green block">{t('home.inProgress')}</span>
+                <span className="text-ink block truncate text-[17px]">
+                  {t('home.summary', { red: inProgress.teams.red.score, blue: inProgress.teams.blue.score, season: t(`season.${season}`) })}
+                </span>
+              </span>
+              <ChevronIcon className="text-faint size-6" />
+            </button>
+          )}
+          <Btn shine className="stagger" style={{ ['--i' as string]: 1 }} onClick={startNew}>
+            {t('home.newGame')}
+          </Btn>
+          <div className="stagger grid grid-cols-2 gap-3" style={{ ['--i' as string]: 2 }}>
+            <Btn color="white" size="sm" className="min-h-[48px]" onClick={() => navigate('/rules')}>
+              <BookIcon />
+              {t('home.howToPlay')}
+            </Btn>
+            <Btn color="white" size="sm" className="min-h-[48px]" onClick={() => navigate('/history')}>
+              <ClockIcon />
+              {t('home.history')}
+            </Btn>
+          </div>
         </div>
       </div>
       <ConfirmDialog
-        open={confirmNew}
+        open={confirm}
         message={t('home.replaceConfirm')}
-        confirmLabel={t('common.confirm')}
+        confirmLabel={t('home.newGame')}
         cancelLabel={t('common.cancel')}
-        onCancel={() => setConfirmNew(false)}
+        onCancel={() => setConfirm(false)}
         onConfirm={() => {
           clearGame()
           navigate('/setup')
         }}
       />
-    </Screen>
+    </Page>
   )
 }

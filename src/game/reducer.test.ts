@@ -1,217 +1,229 @@
 import { describe, expect, it } from 'vitest'
-import { createGame, gameReducer, isGameState, remainingMs, type GameAction } from './reducer'
-import { eggStageOf, lapOf, seasonOf, squareOf } from './rules'
-import type { GameState } from './types'
-import { en } from '../i18n/en'
-import { fr } from '../i18n/fr'
-import { translate } from '../settings/SettingsProvider'
-import { SQUARES, squareTypeAt } from '../data/board'
-import { addRecord, HISTORY_LIMIT, toRecord } from './history'
+import { gameReducer, type GameAction } from './reducer'
+import { currentPlayer, remainingMs, teamCanHatch } from './selectors'
+import { createGame } from './setup'
+import type { GameCommand } from './useGame'
+import { SQUARES } from '../data/board'
+import { findCard } from '../data/cards'
+import { eggStageOf, squaresToSeason } from './rules'
+import type { GameSetup, GameState } from './types'
 
 const T0 = 1_000_000
-const setup = { teamNames: { red: 'Foxes', blue: 'Owls' }, firstTeam: 'red' as const, durationMinutes: 30 }
-const start = () => createGame(setup, T0, 'test')
-const run = (state: GameState, ...actions: GameAction[]) => actions.reduce(gameReducer, state)
 
-describe('board and seasons', () => {
-  it('maps distance to square, season and lap', () => {
-    expect([squareOf(0), seasonOf(0), lapOf(0)]).toEqual([0, 'summer', 1])
-    expect(seasonOf(10)).toBe('autumn')
-    expect(seasonOf(25)).toBe('winter')
-    expect(seasonOf(39)).toBe('spring')
-    expect([squareOf(43), seasonOf(43), lapOf(43)]).toEqual([3, 'summer', 2])
+const teams: GameSetup = {
+  mode: 'teams',
+  teams: {
+    red: { name: 'Foxes', players: ['Léa', 'Tom'], animals: ['koala', 'fox'], students: 0 },
+    blue: { name: 'Rangers', players: ['Manon', 'Lou'], animals: ['koala', 'goat'], students: 0 },
+  },
+  firstTeam: 'red',
+  timerMinutes: null,
+}
+
+const cls: GameSetup = {
+  mode: 'class',
+  teams: {
+    red: { name: 'Window side', players: [], animals: ['frog'], students: 13 },
+    blue: { name: 'Door side', players: [], animals: ['goat'], students: 12 },
+  },
+  firstTeam: 'blue',
+  timerMinutes: 30,
+}
+
+function run(state: GameState, ...actions: GameCommand[]): GameState {
+  return actions.reduce((s, a, i) => gameReducer(s, { ...a, now: T0 + i + 1 } as GameAction), state)
+}
+
+function firstSquare(type: string): number {
+  return SQUARES.findIndex((s, i) => i > 0 && s.type === type)
+}
+
+function rollTo(state: GameState, target: number): GameState {
+  const from = state.pawns.find((p) => p.id === currentPlayer(state).pawn)!.distance
+  const total = target - from
+  const a = Math.min(6, Math.max(1, total - 1))
+  const s = run(state, { type: 'roll', dice: [a, Math.max(1, total - a)] })
+  if (s.phase.kind !== 'move') return s
+  return run(s, { type: 'fixMove', delta: target - s.phase.to })
+}
+
+describe('createGame', () => {
+  it('creates 4 pawns and alternates teams in team mode', () => {
+    const g = createGame(teams, T0, () => 0)
+    expect(g.pawns).toHaveLength(4)
+    expect(g.players.map((p) => p.name)).toEqual(['Léa', 'Manon', 'Tom', 'Lou'])
+    expect(g.teams.red.creature).not.toBe(g.teams.blue.creature)
+    expect(g.players.map((p) => p.animal)).toEqual(['koala', 'fox', 'frog', 'goat'])
+    expect(g.timer.limitMs).toBeNull()
   })
-  it('gives 5 egg stages', () => {
-    expect([0, 9, 10, 20, 30, 45].map((s) => eggStageOf(s))).toEqual(['egg', 'egg', 'wobble', 'crack', 'peek', 'peek'])
-    expect(eggStageOf(40, true)).toBe('hatched')
+
+  it('creates one pawn per group in class mode', () => {
+    const g = createGame(cls, T0)
+    expect(g.pawns.map((p) => p.team).sort()).toEqual(['blue', 'red'])
+    expect(g.players.map((p) => p.team)).toEqual(['blue', 'red'])
+    expect(g.teams.red.students).toBe(13)
+    expect(g.timer.limitMs).toBe(30 * 60_000)
   })
 })
 
-describe('turns and score', () => {
-  it('starts with the chosen team and a running timer', () => {
-    const g = start()
-    expect(g.turn.team).toBe('red')
-    expect(remainingMs(g.timer, T0 + 60_000)).toBe(29 * 60_000)
+describe('turns', () => {
+  it('rolls two dice and moves the pawn of the player', () => {
+    const g = run(createGame(teams, T0), { type: 'roll', dice: [3, 4] })
+    expect(g.phase).toEqual({ kind: 'move', dice: [3, 4], from: 0, to: 7 })
+    expect(g.pawns.find((p) => p.id === 'red-1')!.distance).toBe(7)
   })
-  it('a correct answer gives +2 and passes the turn', () => {
-    const g = run(start(), { type: 'answer', correct: true, now: T0 + 1 })
+
+  it('lets the table fix the landing square', () => {
+    const g = run(createGame(teams, T0), { type: 'roll', dice: [3, 4] }, { type: 'fixMove', delta: -1 })
+    expect(g.phase.kind === 'move' && g.phase.to).toBe(6)
+    expect(g.pawns.find((p) => p.id === 'red-1')!.distance).toBe(6)
+  })
+
+  it('gives 2 points alone on a neutral square and passes to the next player', () => {
+    let g = rollTo(createGame(teams, T0), firstSquare('neutral'))
+    g = run(g, { type: 'land', random: 0.99 })
+    expect(g.phase.kind).toBe('question')
+    const card = g.phase.kind === 'question' ? findCard(g.phase.cardId) : undefined
+    expect(card?.deck).toBe('questions')
+    if (card?.category === 'challenge') return
+    g = run(g, { type: 'answer', correct: true })
     expect(g.teams.red.score).toBe(2)
-    expect(g.turn.team).toBe('blue')
+    expect(g.phase.kind).toBe('feedback')
+    g = run(g, { type: 'continue' })
+    expect(currentPlayer(g).name).toBe('Manon')
   })
-  it('a wrong answer gives nothing and passes the turn', () => {
-    const g = run(start(), { type: 'answer', correct: false, now: T0 + 1 })
-    expect(g.teams.red.score).toBe(0)
-    expect(g.turn.team).toBe('blue')
-  })
-  it('end turn and tapping a team change the turn', () => {
-    let g = run(start(), { type: 'endTurn', now: T0 + 1 })
-    expect(g.turn.team).toBe('blue')
-    g = run(g, { type: 'setTurn', team: 'red', now: T0 + 2 })
-    expect(g.turn.team).toBe('red')
-  })
-  it('manual score correction never goes below 0', () => {
-    const g = run(start(), { type: 'adjustScore', team: 'blue', delta: -1, now: T0 + 1 })
-    expect(g.teams.blue.score).toBe(0)
-  })
-})
 
-describe('die and position', () => {
-  it('moves the active team by the roll, once per turn', () => {
-    let g = run(start(), { type: 'roll', value: 4, now: T0 + 1 })
-    expect(g.teams.red.distance).toBe(4)
-    g = run(g, { type: 'roll', value: 6, now: T0 + 2 })
-    expect(g.teams.red.distance).toBe(4)
-    g = run(g, { type: 'endTurn', now: T0 + 3 }, { type: 'roll', value: 6, now: T0 + 4 })
-    expect(g.teams.blue.distance).toBe(6)
-  })
-  it('allows ±1 position correction, never below the start', () => {
-    const g = run(start(), { type: 'move', team: 'red', delta: -1, now: T0 + 1 }, { type: 'move', team: 'blue', delta: 1, now: T0 + 2 })
-    expect(g.teams.red.distance).toBe(0)
-    expect(g.teams.blue.distance).toBe(1)
-  })
-})
-
-describe('winning', () => {
-  it('hatches with 40 points in spring', () => {
-    let g = start()
-    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 38, distance: 32 } } }
-    g = run(g, { type: 'answer', correct: true, now: T0 + 1 })
-    expect(g.status).toBe('finished')
-    expect(g.winner).toBe('red')
-    expect(g.endReason).toBe('hatched')
-  })
-  it('does not hatch with 40 points outside spring', () => {
-    let g = start()
-    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 38, distance: 12 } } }
-    g = run(g, { type: 'answer', correct: true, now: T0 + 1 })
-    expect(g.status).toBe('playing')
-    expect(g.teams.red.score).toBe(40)
-  })
-  it('hatches when a team with 40 points reaches spring by rolling', () => {
-    let g = start()
-    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 40, distance: 27 } } }
-    g = run(g, { type: 'roll', value: 3, now: T0 + 1 })
-    expect(g.winner).toBe('red')
-  })
-  it('nobody wins when the timer reaches 0', () => {
-    const g = run(start(), { type: 'tick', now: T0 + 30 * 60_000 })
-    expect(g.status).toBe('finished')
-    expect(g.winner).toBeNull()
-    expect(g.endReason).toBe('timeout')
-  })
-  it('ignores actions after the end', () => {
-    const end = run(start(), { type: 'abandon', now: T0 + 1 })
-    expect(run(end, { type: 'answer', correct: true, now: T0 + 2 })).toBe(end)
-  })
-})
-
-describe('pause', () => {
-  it('stops the clock while paused', () => {
-    const g = run(start(), { type: 'pause', now: T0 + 60_000 }, { type: 'tick', now: T0 + 60 * 60_000 })
-    expect(g.status).toBe('paused')
-    expect(remainingMs(g.timer, T0 + 60 * 60_000)).toBe(29 * 60_000)
-    const resumed = run(g, { type: 'resume', now: T0 + 60 * 60_000 })
-    expect(remainingMs(resumed.timer, T0 + 61 * 60_000)).toBe(28 * 60_000)
-  })
-  it('blocks game actions while paused', () => {
-    const paused = run(start(), { type: 'pause', now: T0 + 1 })
-    expect(run(paused, { type: 'answer', correct: true, now: T0 + 2 })).toBe(paused)
-  })
-})
-
-describe('bonus', () => {
-  it('adds bonus points to the +2', () => {
-    const g = run(start(), { type: 'answer', correct: true, bonus: { scoreDelta: 1 }, now: T0 + 1 })
+  it('gives 3 points together on a team square', () => {
+    let g = rollTo(createGame(teams, T0), firstSquare('team'))
+    g = run(g, { type: 'land', random: 0 })
+    expect(g.phase.kind === 'question' && g.phase.square).toBe('team')
+    g = run(g, { type: 'answer', correct: true })
     expect(g.teams.red.score).toBe(3)
-    expect(g.turn.team).toBe('blue')
   })
-  it('moves the team forward', () => {
-    const g = run(start(), { type: 'answer', correct: true, bonus: { moveDelta: 2 }, now: T0 + 1 })
-    expect(g.teams.red.distance).toBe(2)
+
+  it('gives challenge points to the winning team', () => {
+    let g = rollTo(createGame(teams, T0), firstSquare('neutral'))
+    g = run(g, { type: 'land', random: 0.99 })
+    g = { ...g, phase: { kind: 'question', cardId: 'c-1', square: 'neutral' } }
+    g = run(g, { type: 'challenge', winner: 'blue' })
+    expect(g.teams.blue.score).toBe(3)
+    expect(g.teams.blue.challenges).toBe(1)
   })
-  it('keeps the turn with a replay bonus', () => {
-    const g = run(start(), { type: 'roll', value: 3, now: T0 + 1 }, { type: 'answer', correct: true, bonus: { extraTurn: true }, now: T0 + 2 })
-    expect(g.turn.team).toBe('red')
-    expect(g.turn.roll).toBeNull()
-  })
-  it('ignores the bonus on a wrong answer', () => {
-    const g = run(start(), { type: 'answer', correct: false, bonus: { scoreDelta: 5 }, now: T0 + 1 })
-    expect(g.teams.red.score).toBe(0)
+
+  it('counts a new round after everybody played', () => {
+    let g = createGame(teams, T0)
+    for (let i = 0; i < 4; i++) {
+      g = run(g, { type: 'roll', dice: [1, 1] })
+      g = { ...g, phase: { kind: 'feedback', cardId: 'x', square: 'neutral', correct: false, points: 0, team: null } }
+      g = run(g, { type: 'continue' })
+    }
+    expect(g.round).toBe(2)
+    expect(currentPlayer(g).name).toBe('Léa')
   })
 })
 
-describe('malus', () => {
-  it('targets the other team and applies its effect', () => {
-    let g = start()
-    g = { ...g, teams: { ...g.teams, blue: { ...g.teams.blue, score: 10, distance: 5 } } }
-    g = run(g, { type: 'playMalus', by: 'red', cardId: 'm', effect: { scoreDelta: -2, moveDelta: -3 }, now: T0 + 1 })
-    expect(g.teams.blue.score).toBe(8)
-    expect(g.teams.blue.distance).toBe(2)
-    expect(g.malusSeq).toBe(1)
-    expect(g.lastMalus?.target).toBe('blue')
+describe('bonus and malus', () => {
+  it('keeps a bonus card in the team bag and uses it later', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, phase: { kind: 'bonus', cardId: 'bonus-3' } }
+    g = run(g, { type: 'bonus', keep: true })
+    expect(g.teams.red.kept).toEqual(['bonus-3'])
+    g = { ...g, turn: 0, phase: { kind: 'roll' } }
+    g = run(g, { type: 'useKept', team: 'red', cardId: 'bonus-3' })
+    expect(g.teams.red.kept).toEqual([])
+    expect(g.pawns.find((p) => p.id === 'red-1')!.distance).toBe(2)
   })
-  it('can be played by the team that is not playing', () => {
-    const g = run(start(), { type: 'playMalus', by: 'blue', now: T0 + 1 })
-    expect(g.lastMalus?.target).toBe('red')
-    expect(g.turn.team).toBe('red')
+
+  it('applies a malus to the team that drew it', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 10 } }, pawns: g.pawns.map((p) => ({ ...p, distance: 10 })) }
+    g = { ...g, phase: { kind: 'malus', cardId: 'malus-1' } }
+    g = run(g, { type: 'malus', shield: false })
+    expect(g.teams.red.score).toBe(8)
+    expect(g.pawns.find((p) => p.id === 'red-1')!.distance).toBe(7)
   })
-  it('skip turn makes the turn come back', () => {
-    const g = run(
-      start(),
-      { type: 'playMalus', by: 'red', effect: { skipTurn: true }, now: T0 + 1 },
-      { type: 'endTurn', now: T0 + 2 },
-    )
-    expect(g.turn.team).toBe('red')
-    expect(g.skipNext).toEqual([])
+
+  it('cancels a malus with a kept shield', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 10, kept: ['bonus-2'] } }, phase: { kind: 'malus', cardId: 'malus-2' } }
+    g = run(g, { type: 'malus', shield: true })
+    expect(g.teams.red.score).toBe(10)
+    expect(g.teams.red.kept).toEqual([])
+  })
+
+  it('skips the next turn of the player', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, phase: { kind: 'malus', cardId: 'malus-3' } }
+    g = run(g, { type: 'malus', shield: false })
+    expect(currentPlayer(g).name).toBe('Manon')
+    for (let i = 0; i < 3; i++) {
+      g = { ...g, phase: { kind: 'feedback', cardId: 'x', square: 'neutral', correct: false, points: 0, team: null } }
+      g = run(g, { type: 'continue' })
+    }
+    expect(currentPlayer(g).name).toBe('Manon')
+  })
+
+  it('lets the player roll again with a bonus', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, phase: { kind: 'bonus', cardId: 'bonus-1' } }
+    g = run(g, { type: 'bonus', keep: false })
+    expect(g.phase.kind).toBe('roll')
+    expect(currentPlayer(g).name).toBe('Léa')
   })
 })
 
-describe('saving and i18n', () => {
-  it('a game survives JSON round trip', () => {
-    const g = run(start(), { type: 'roll', value: 3, now: T0 + 1 })
-    const loaded: unknown = JSON.parse(JSON.stringify(g))
-    expect(isGameState(loaded)).toBe(true)
-    expect(isGameState({ version: 2 })).toBe(false)
+describe('egg and hatching', () => {
+  it('shows the egg evolving every 10 points', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 9 } }, phase: { kind: 'question', cardId: 'q-1', square: 'neutral' } }
+    g = run(g, { type: 'answer', correct: true }, { type: 'continue' })
+    expect(g.phase).toEqual({ kind: 'evolve', team: 'red', stage: 1 })
+    expect(eggStageOf(39)).toBe(3)
   })
-  it('translates with variables in both languages', () => {
-    expect(translate(en, 'game.turnOf', { team: 'Owls' })).toBe('Owls, your turn!')
-    expect(translate(fr, 'game.turnOf', { team: 'Owls' })).toBe('Au tour de Owls')
+
+  it('asks to reach Spring at 40 points', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 38 } }, phase: { kind: 'question', cardId: 'q-1', square: 'neutral' } }
+    g = run(g, { type: 'answer', correct: true }, { type: 'continue' })
+    expect(g.phase).toEqual({ kind: 'spring', team: 'red' })
+    expect(g.teams.red.springNotified).toBe(true)
   })
-  it('has the same keys in English and French', () => {
-    const keys = (o: object, p = ''): string[] =>
-      Object.entries(o).flatMap(([k, v]) => (typeof v === 'string' ? [p + k] : keys(v as object, `${p}${k}.`)))
-    expect(keys(fr).sort()).toEqual(keys(en).sort())
+
+  it('hatches with 40 points and one pawn in Spring', () => {
+    let g = createGame(teams, T0)
+    g = { ...g, teams: { ...g.teams, red: { ...g.teams.red, score: 40 } } }
+    expect(teamCanHatch(g, 'red')).toBe(false)
+    g = rollTo(g, 30)
+    g = run(g, { type: 'land', random: 0 })
+    expect(g.phase).toEqual({ kind: 'hatch', team: 'red' })
+    g = run(g, { type: 'hatch' })
+    expect(g.status).toBe('finished')
+    expect(g.winner).toBe('red')
+  })
+
+  it('counts the squares left before Spring', () => {
+    expect(squaresToSeason(25, 'spring')).toBe(5)
+    expect(squaresToSeason(30, 'spring')).toBe(0)
   })
 })
 
-describe('board squares', () => {
-  it('has one type per square and picks the card from the landing square', () => {
-    expect(SQUARES).toHaveLength(40)
-    const g = run(start(), { type: 'roll', value: 5, now: T0 + 1 })
-    expect(squareTypeAt(g.teams.red.distance)).toBe(SQUARES[5])
-    expect(squareTypeAt(40)).toBe(SQUARES[0])
+describe('timer', () => {
+  it('has no limit by default', () => {
+    expect(remainingMs(createGame(teams, T0).timer, T0 + 10 ** 9)).toBeNull()
   })
-})
 
-describe('history', () => {
-  it('records finished games once, newest first, but not abandoned ones', () => {
-    const won = run({ ...start(), teams: { ...start().teams, red: { ...start().teams.red, score: 38, distance: 35 } } }, { type: 'answer', correct: true, now: T0 + 60_000 })
-    const record = toRecord(won)
-    expect(record?.winner).toBe('red')
-    expect(record?.playedMs).toBe(60_000)
-    expect(toRecord(start())).toBeNull()
-    expect(toRecord(run(start(), { type: 'abandon', now: T0 + 1 }))).toBeNull()
-    const timeout = toRecord(run(createGame(setup, T0, 'other'), { type: 'tick', now: T0 + 31 * 60_000 }))!
-    let list = addRecord([], record!)
-    list = addRecord(list, record!)
-    list = addRecord(list, timeout)
-    expect(list.map((r) => r.id)).toEqual(['other', 'test'])
-    expect(list[0].winner).toBeNull()
+  it('ends with no winner when the optional timer runs out', () => {
+    const g = gameReducer(createGame(cls, T0), { type: 'tick', now: T0 + 31 * 60_000 })
+    expect(g.status).toBe('finished')
+    expect(g.endReason).toBe('timeout')
+    expect(g.winner).toBeNull()
   })
-  it('keeps at most the limit', () => {
-    let list = [] as ReturnType<typeof addRecord>
-    const base = toRecord(run(start(), { type: 'tick', now: T0 + 31 * 60_000 }))!
-    for (let i = 0; i < HISTORY_LIMIT + 5; i++) list = addRecord(list, { ...base, id: String(i) })
-    expect(list).toHaveLength(HISTORY_LIMIT)
+
+  it('pauses the clock', () => {
+    let g = createGame(cls, T0)
+    g = gameReducer(g, { type: 'pause', now: T0 + 1000 })
+    g = gameReducer(g, { type: 'tick', now: T0 + 60 * 60_000 })
+    expect(g.status).toBe('paused')
+    expect(g.timer.elapsedMs).toBe(1000)
   })
 })

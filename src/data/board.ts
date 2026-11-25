@@ -1,13 +1,18 @@
 import data from './board.json'
 import { BOARD_SIZE, squareOf } from '../game/rules'
-import type { CardType } from '../game/types'
+import type { SquareType } from '../game/types'
 
-export type SquareType = CardType | 'start'
+export interface Square {
+  type: SquareType
+  x: number
+  y: number
+}
 
-export const SQUARES = (data as { squares: SquareType[] }).squares
+export const BOARD = data as { width: number; height: number; squares: Square[] }
+export const SQUARES = BOARD.squares
 
 if (SQUARES.length !== BOARD_SIZE) throw new Error(`board.json must have ${BOARD_SIZE} squares`)
 
 export function squareTypeAt(distance: number): SquareType {
-  return SQUARES[squareOf(distance)]
+  return SQUARES[squareOf(distance)].type
 }

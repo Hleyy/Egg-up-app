@@ -5,13 +5,13 @@ export interface GameRecord {
   startedAt: number
   endedAt: number
   playedMs: number
-  durationMs: number
+  mode: GameState['mode']
   teams: Record<TeamId, { name: string; score: number }>
   winner: TeamId | null
   reason: EndReason
 }
 
-const KEY = 'eggup:history:v1'
+const KEY = 'eggup:history:v3'
 export const HISTORY_LIMIT = 50
 
 export function toRecord(game: GameState): GameRecord | null {
@@ -22,7 +22,7 @@ export function toRecord(game: GameState): GameRecord | null {
     startedAt: game.createdAt,
     endedAt: end?.at ?? game.createdAt,
     playedMs: game.timer.elapsedMs,
-    durationMs: game.timer.durationMs,
+    mode: game.mode,
     teams: {
       red: { name: game.teams.red.name, score: game.teams.red.score },
       blue: { name: game.teams.blue.name, score: game.teams.blue.score },
