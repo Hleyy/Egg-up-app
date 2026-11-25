@@ -30,7 +30,7 @@ export function AnimalArt({
     <div className={`animal ${talking ? 'is-talking' : ''} ${className}`} aria-hidden="true">
       <div key={`${cue}-${cueKey}`} className={`animal-cue ${cue ? CUE_CLASS[cue] : ''}`}>
         <div className="animal-body">
-          <img src={`/animals/${animal}.svg`} alt="" draggable={false} />
+          <img src={`/animals/${animal}.webp`} alt="" draggable={false} />
         </div>
       </div>
     </div>

@@ -82,17 +82,19 @@ interface PawnView extends BoardPawn {
   slots: number
 }
 
-const BASE_R = 0.17
-const FIGURE_H = 0.95
-const FIGURE_SLOT = FIGURE_H * 0.76
-const ROW = 0.95
-const GAP = 0.04
+const BASE_R = 0.19
+const FIGURE_H = 1.25
+const FIGURE_SLOT = FIGURE_H * 0.75
+const GAP = 0.05
 
-function layout(slot: number, slots: number, portrait: boolean): { x: number; z: number; scale: number } {
-  if (slots <= 1) return { x: 0, z: 0, scale: 1 }
-  const scale = Math.min(1, (ROW / slots - GAP) / FIGURE_SLOT)
-  const along = (slot - (slots - 1) / 2) * (FIGURE_SLOT * scale + GAP)
-  return portrait ? { x: 0, z: along, scale } : { x: along, z: 0, scale }
+function layout(slot: number, slots: number, portrait: boolean): { x: number; z: number; reach: number } {
+  const along = (slot - (slots - 1) / 2) * (FIGURE_SLOT + GAP)
+  const reach = Math.max(0, (portrait ? H : W) / 2 - (slots * (FIGURE_SLOT + GAP)) / 2 - 0.1)
+  return portrait ? { x: 0, z: along, reach } : { x: along, z: 0, reach }
+}
+
+function clamp(value: number, limit: number): number {
+  return Math.min(limit, Math.max(-limit, value))
 }
 
 function Pawn({ pawn, portrait, onArrive }: { pawn: PawnView; portrait: boolean; onArrive?: () => void }) {
@@ -101,7 +103,7 @@ function Pawn({ pawn, portrait, onArrive }: { pawn: PawnView; portrait: boolean;
   const hop = useRef(0)
   const face = useRef<THREE.Mesh>(null)
   const eye = useMemo(() => new THREE.Vector3(), [])
-  const figure = useTexture(`/pawns/${pawn.animal}.svg`, prepareTexture)
+  const figure = useTexture(`/animals/${pawn.animal}.webp`, prepareTexture)
   const image = figure.image as { width: number; height: number }
   const figureW = FIGURE_H * (image.width / image.height)
   const [base, light] = TEAM_HEX[pawn.team]
@@ -125,9 +127,11 @@ function Pawn({ pawn, portrait, onArrive }: { pawn: PawnView; portrait: boolean;
     const t = moving ? hop.current : 0
     const e = t * t * (3 - 2 * t)
     const bob = pawn.active && !moving ? Math.abs(Math.sin(clock.elapsedTime * 3)) * 0.05 : 0
-    g.position.set(from[0] + (to[0] - from[0]) * e + spot.x, TOP + Math.sin(Math.PI * t) * 0.32 + bob, from[1] + (to[1] - from[1]) * e + spot.z)
+    const x = from[0] + (to[0] - from[0]) * e
+    const z = from[1] + (to[1] - from[1]) * e
+    g.position.set((portrait ? x : clamp(x, spot.reach)) + spot.x, TOP + Math.sin(Math.PI * t) * 0.32 + bob, (portrait ? clamp(z, spot.reach) : z) + spot.z)
     const squash = moving ? 1 - Math.sin(Math.PI * t) * 0.08 : 1
-    g.scale.set(spot.scale, spot.scale * squash, spot.scale)
+    g.scale.set(1, squash, 1)
     if (face.current) {
       g.worldToLocal(eye.copy(camera.position))
       face.current.rotation.y = Math.atan2(eye.x, eye.z)
