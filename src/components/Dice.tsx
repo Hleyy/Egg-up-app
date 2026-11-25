@@ -1,4 +1,7 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
+import { hasWebGL } from './board/loadBoard3D'
+
+const Dice3D = lazy(() => import('./Dice3D'))
 
 const PIPS: Record<number, number[]> = { 1: [5], 2: [3, 7], 3: [3, 5, 7], 4: [1, 3, 7, 9], 5: [1, 3, 5, 7, 9], 6: [1, 3, 4, 6, 7, 9] }
 
@@ -85,21 +88,33 @@ export function DicePair({
   className?: string
 }) {
   const spins = useDiceSpin(values)
+  const [webgl] = useState(hasWebGL)
   const [shake, setShake] = useState(false)
   useEffect(() => {
     if (!onRoll) return
     const id = window.setInterval(() => setShake((s) => !s), 2600)
     return () => window.clearInterval(id)
   }, [onRoll])
-  const shown = values ?? [3, 5]
-  const content = (
-    <span className="flex items-center gap-[18%]" style={{ animation: onRoll && shake ? 'dice-shake .5s ease-in-out' : undefined }}>
+  const shown: [number, number] = values ?? [3, 5]
+  const flat = (
+    <span className="flex items-center gap-[18%]">
       <span className="-rotate-6">
         <Die value={shown[0]} spins={spins} size={size} />
       </span>
       <span className="translate-y-[-10%] rotate-6">
         <Die value={shown[1]} spins={spins + 1} size={size} tilt={-1} />
       </span>
+    </span>
+  )
+  const content = (
+    <span className="block" style={{ animation: onRoll && shake ? 'dice-shake .5s ease-in-out' : undefined }}>
+      {webgl ? (
+        <Suspense fallback={flat}>
+          <Dice3D values={shown} spins={spins} size={size} />
+        </Suspense>
+      ) : (
+        flat
+      )}
     </span>
   )
   if (!onRoll) return <div className={className}>{content}</div>
