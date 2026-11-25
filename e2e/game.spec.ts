@@ -78,7 +78,10 @@ test('french names default players joueur', async ({ page }) => {
   await page.getByRole('button', { name: 'Continuer' }).click()
   const lets = page.getByRole('button', { name: "C'est parti" })
   for (let i = 0; i < 12 && !(await lets.isVisible()); i++) {
-    await page.getByRole('button', { name: /Lancer les dés/ }).first().click()
+    await page
+      .getByRole('button', { name: /Lancer les dés/ })
+      .first()
+      .click()
     await page.waitForTimeout(1600)
   }
   await lets.click()
