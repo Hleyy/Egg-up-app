@@ -6,6 +6,7 @@ import { AnimalFace } from './animals/AnimalFace'
 import type { AnimalId, Season, TeamId } from '../game/types'
 import { BackIcon, PauseIcon } from './icons'
 import { useSettings } from '../settings/useSettings'
+import { useGame } from '../game/useGame'
 
 export type BtnColor = 'green' | 'blue' | 'red' | 'yellow' | 'purple' | 'white'
 
@@ -133,8 +134,13 @@ export function BackButton({ to }: { to?: string }) {
 export function PauseButton() {
   const navigate = useNavigate()
   const { t } = useSettings()
+  const { pause } = useGame()
+  const open = () => {
+    pause()
+    navigate('/pause')
+  }
   return (
-    <IconBtn label={t('game.pause')} onClick={() => navigate('/pause')}>
+    <IconBtn label={t('game.pause')} onClick={open}>
       <PauseIcon />
     </IconBtn>
   )

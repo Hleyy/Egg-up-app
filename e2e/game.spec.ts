@@ -60,6 +60,15 @@ test('pause, fix a score and end the game', async ({ page }) => {
   await expect(page).toHaveURL(/\/end$/)
 })
 
+test('resume goes back to the game', async ({ page }) => {
+  await startGame(page)
+  await page.getByRole('button', { name: 'Pause' }).first().click()
+  await expect(page.getByRole('heading', { name: 'Game paused' })).toBeVisible()
+  await page.getByRole('button', { name: 'Resume' }).click()
+  await expect(page).toHaveURL(/\/game$/)
+  await expect(page.getByRole('button', { name: 'Roll the dice' }).last()).toBeVisible()
+})
+
 test('french switches the interface', async ({ page }) => {
   await page.getByRole('button', { name: 'Settings' }).click()
   await page.getByRole('button', { name: 'Français' }).click()

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { BookIcon, GearIcon, PlayIcon, UndoIcon } from '../components/icons'
 import { Btn, ConfirmDialog, Page, Scene, TopBar } from '../components/ui'
@@ -10,17 +10,12 @@ import { useGame } from '../game/useGame'
 import { useSettings } from '../settings/useSettings'
 
 export function PauseScreen() {
-  const { game, pause, resume, abandon, undo, canUndo, remaining } = useGame()
+  const { game, resume, abandon, undo, canUndo, remaining } = useGame()
   const { t } = useSettings()
   const labels = useLabels()
   const turn = useTurn()
   const navigate = useNavigate()
   const [confirm, setConfirm] = useState(false)
-  const status = game?.status
-
-  useEffect(() => {
-    if (status === 'playing') pause()
-  }, [status, pause])
 
   if (!game || !turn) return <Navigate to="/" replace />
   if (game.status === 'finished') return <Navigate to="/end" replace />
