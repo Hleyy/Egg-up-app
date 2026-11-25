@@ -1,4 +1,5 @@
 import { Navigate } from 'react-router-dom'
+import { useMediaQuery } from '../lib/useMediaQuery'
 import { Board } from '../components/board/Board'
 import { Page, Scene } from '../components/ui'
 import { boardPawns, eggStages, useTurn } from '../game/useView'
@@ -14,6 +15,7 @@ export function GameScreen() {
   const { game } = useGame()
   const { settings } = useSettings()
   const turn = useTurn()
+  const wide = useMediaQuery('(min-width: 1024px)')
   useWakeLock(settings.keepAwake && game?.status === 'playing')
   if (!game || !turn) return <Navigate to="/" replace />
   if (game.status === 'finished') return <Navigate to="/end" replace />
@@ -37,9 +39,11 @@ export function GameScreen() {
   return (
     <Page
       aside={
-        <div className="relative size-full overflow-hidden rounded-[36px] bg-white/40 shadow-[inset_0_0_0_2px_rgba(255,255,255,.7)] backdrop-blur-sm">
-          <Board pawns={boardPawns(game)} eggs={eggStages(game)} focus={focus} className="absolute inset-0" />
-        </div>
+        wide && (
+          <div className="relative size-full overflow-hidden rounded-[36px] bg-white/40 shadow-[inset_0_0_0_2px_rgba(255,255,255,.7)] backdrop-blur-sm">
+            <Board pawns={boardPawns(game)} eggs={eggStages(game)} focus={focus} className="absolute inset-0" />
+          </div>
+        )
       }
     >
       {kind !== 'evolve' && kind !== 'hatch' && <Scene season={sceneSeason} strong={sceneSeason === null} />}

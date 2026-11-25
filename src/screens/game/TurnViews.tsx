@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Board } from '../../components/board/Board'
+import { preloadBoard } from '../../components/board/loadBoard3D'
 import { DicePair } from '../../components/Dice'
 import { DiceIcon } from '../../components/icons'
 import { Avatar, BottomPanel, Btn, Pill, Stepper } from '../../components/ui'
@@ -19,6 +20,7 @@ export function RollView() {
   const { dispatch } = useGame()
   const labels = useLabels()
   const [rolling, setRolling] = useState<[number, number] | null>(null)
+  useEffect(preloadBoard, [])
 
   const roll = () => {
     if (rolling) return

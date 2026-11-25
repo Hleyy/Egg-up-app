@@ -3,19 +3,11 @@ import { SQUARES } from '../../data/board'
 import { squareOf } from '../../game/rules'
 import type { EggStage, TeamId } from '../../game/types'
 import type { BoardPawn } from './types'
+import { hasWebGL, loadBoard3D } from './loadBoard3D'
 
-const Board3D = lazy(() => import('./Board3D'))
+const Board3D = lazy(loadBoard3D)
 
 const TEAM_HEX: Record<TeamId, string> = { red: '#FF4B4B', blue: '#1CB0F6' }
-
-function hasWebGL(): boolean {
-  try {
-    const c = document.createElement('canvas')
-    return !!(c.getContext('webgl2') || c.getContext('webgl'))
-  } catch {
-    return false
-  }
-}
 
 class Guard extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
   state = { failed: false }
@@ -36,12 +28,14 @@ export function Board2D({ pawns, className = '' }: { pawns: BoardPawn[]; classNa
           const s = SQUARES[squareOf(p.distance)]
           const same = pawns.filter((q) => squareOf(q.distance) === squareOf(p.distance))
           const k = same.indexOf(p)
-          const dx = same.length > 1 ? (k - (same.length - 1) / 2) * 2.2 : 0
+          const size = same.length > 2 ? 3.6 : 5
+          const dx = (k - (same.length - 1) / 2) * (size + 0.8)
           return (
             <span
               key={p.id}
-              className="font-display absolute grid size-[5%] min-h-5 min-w-5 -translate-x-1/2 -translate-y-[80%] place-items-center rounded-full text-[10px] text-white transition-all duration-500"
+              className="font-display absolute grid aspect-square min-h-4 min-w-4 -translate-x-1/2 -translate-y-[80%] place-items-center rounded-full text-[10px] text-white transition-all duration-500"
               style={{
+                width: `${size}%`,
                 left: `${s.x * 100 + dx}%`,
                 top: `${s.y * 100}%`,
                 background: TEAM_HEX[p.team],

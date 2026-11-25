@@ -1,7 +1,6 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { AnimalFace } from '../animals/AnimalFace'
-import { Html, OrbitControls, RoundedBox, useTexture } from '@react-three/drei'
+import { OrbitControls, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { SQUARES } from '../../data/board'
 import { squareOf } from '../../game/rules'
@@ -11,6 +10,8 @@ import type { BoardPawn } from './types'
 const W = 8.48
 const H = 6
 const TOP = 0.14
+const EDGE = '#D9BD8E'
+const CORNER = (40 / 848.48) * W
 
 const TEAM_HEX: Record<TeamId, [string, string]> = {
   red: ['#FF4B4B', '#FF8A6B'],
@@ -24,45 +25,41 @@ function tilePos(index: number): [number, number] {
 
 function prepareTexture(texture: THREE.Texture) {
   texture.colorSpace = THREE.SRGBColorSpace
-  texture.anisotropy = 16
+  texture.anisotropy = 4
   texture.needsUpdate = true
+}
+
+function slabGeometry(): THREE.ExtrudeGeometry {
+  const r = CORNER
+  const x = -W / 2
+  const y = -H / 2
+  const shape = new THREE.Shape()
+  shape.moveTo(x + r, y)
+  shape.lineTo(x + W - r, y)
+  shape.quadraticCurveTo(x + W, y, x + W, y + r)
+  shape.lineTo(x + W, y + H - r)
+  shape.quadraticCurveTo(x + W, y + H, x + W - r, y + H)
+  shape.lineTo(x + r, y + H)
+  shape.quadraticCurveTo(x, y + H, x, y + H - r)
+  shape.lineTo(x, y + r)
+  shape.quadraticCurveTo(x, y, x + r, y)
+  return new THREE.ExtrudeGeometry(shape, { depth: 0.22, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02, bevelSegments: 2, curveSegments: 12 })
 }
 
 function BoardSlab() {
   const texture = useTexture('/board/board.svg', prepareTexture)
+  const slab = useMemo(() => slabGeometry(), [])
   return (
     <group>
-      <RoundedBox args={[W + 0.12, 0.26, H + 0.12]} radius={0.12} smoothness={4} position={[0, -0.02, 0]} receiveShadow castShadow>
-        <meshStandardMaterial color="#E7C58E" roughness={0.85} />
-      </RoundedBox>
+      <mesh geometry={slab} rotation={[Math.PI / 2, 0, 0]} position={[0, 0.09, 0]} receiveShadow castShadow>
+        <meshStandardMaterial color={EDGE} roughness={0.85} />
+      </mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.112, 0]} receiveShadow>
         <planeGeometry args={[W, H]} />
-        <meshStandardMaterial map={texture} roughness={0.9} metalness={0} />
+        <meshStandardMaterial map={texture} alphaTest={0.5} roughness={0.9} metalness={0} />
       </mesh>
     </group>
   )
-}
-
-function pawnShape(): THREE.Vector2[] {
-  const pts: [number, number][] = [
-    [0, 0],
-    [0.2, 0],
-    [0.21, 0.03],
-    [0.19, 0.07],
-    [0.13, 0.1],
-    [0.1, 0.16],
-    [0.075, 0.27],
-    [0.07, 0.33],
-    [0.115, 0.35],
-    [0.12, 0.37],
-    [0.08, 0.385],
-    [0.105, 0.43],
-    [0.115, 0.48],
-    [0.1, 0.53],
-    [0.06, 0.565],
-    [0, 0.575],
-  ]
-  return pts.map(([x, y]) => new THREE.Vector2(x, y))
 }
 
 function eggShape(bottomOnly = false): THREE.Vector2[] {
@@ -85,19 +82,30 @@ interface PawnView extends BoardPawn {
   slots: number
 }
 
-function Pawn({ pawn, onArrive }: { pawn: PawnView; onArrive?: () => void }) {
+const BASE_R = 0.17
+const FIGURE_H = 0.8
+const FIGURE_W = FIGURE_H * (1004 / 1752)
+const ROW = 0.95
+const GAP = 0.04
+
+function layout(slot: number, slots: number, portrait: boolean): { x: number; z: number; scale: number } {
+  if (slots <= 1) return { x: 0, z: 0, scale: 1 }
+  const scale = Math.min(1, (ROW / slots - GAP) / FIGURE_W)
+  const along = (slot - (slots - 1) / 2) * (FIGURE_W * scale + GAP)
+  return portrait ? { x: 0, z: along, scale } : { x: along, z: 0, scale }
+}
+
+function Pawn({ pawn, portrait, onArrive }: { pawn: PawnView; portrait: boolean; onArrive?: () => void }) {
   const ref = useRef<THREE.Group>(null)
   const shown = useRef(pawn.distance)
   const hop = useRef(0)
-  const geo = useMemo(() => new THREE.LatheGeometry(pawnShape(), 40), [])
+  const face = useRef<THREE.Mesh>(null)
+  const eye = useMemo(() => new THREE.Vector3(), [])
+  const figure = useTexture(`/animals/${pawn.animal}.svg`, prepareTexture)
   const [base, light] = TEAM_HEX[pawn.team]
-  const offset = useMemo(() => {
-    if (pawn.slots <= 1) return [0, 0]
-    const angle = (pawn.slot / pawn.slots) * Math.PI * 2 + Math.PI / 4
-    return [Math.cos(angle) * 0.16, Math.sin(angle) * 0.16]
-  }, [pawn.slot, pawn.slots])
+  const spot = useMemo(() => layout(pawn.slot, pawn.slots, portrait), [pawn.slot, pawn.slots, portrait])
 
-  useFrame((_, dt) => {
+  useFrame(({ camera, clock }, dt) => {
     const g = ref.current
     if (!g) return
     const target = pawn.distance
@@ -109,36 +117,35 @@ function Pawn({ pawn, onArrive }: { pawn: PawnView; onArrive?: () => void }) {
         if (shown.current === target) onArrive?.()
       }
     }
+    const moving = shown.current !== target
     const from = tilePos(shown.current)
-    const to = shown.current === target ? from : tilePos(shown.current + Math.sign(target - shown.current))
-    const t = shown.current === target ? 0 : hop.current
+    const to = moving ? tilePos(shown.current + Math.sign(target - shown.current)) : from
+    const t = moving ? hop.current : 0
     const e = t * t * (3 - 2 * t)
-    g.position.set(from[0] + (to[0] - from[0]) * e + offset[0], TOP + Math.sin(Math.PI * t) * 0.32, from[1] + (to[1] - from[1]) * e + offset[1])
-    const squash = shown.current === target ? 1 : 1 - Math.sin(Math.PI * t) * 0.08
-    g.scale.set(1, squash, 1)
-    if (pawn.active) g.rotation.y += dt * 0.8
+    const bob = pawn.active && !moving ? Math.abs(Math.sin(clock.elapsedTime * 3)) * 0.05 : 0
+    g.position.set(from[0] + (to[0] - from[0]) * e + spot.x, TOP + Math.sin(Math.PI * t) * 0.32 + bob, from[1] + (to[1] - from[1]) * e + spot.z)
+    const squash = moving ? 1 - Math.sin(Math.PI * t) * 0.08 : 1
+    g.scale.set(spot.scale, spot.scale * squash, spot.scale)
+    if (face.current) {
+      g.worldToLocal(eye.copy(camera.position))
+      face.current.rotation.y = Math.atan2(eye.x, eye.z)
+    }
   })
 
   return (
     <group ref={ref}>
-      <mesh geometry={geo} castShadow receiveShadow scale={[1.15, 1.15, 1.15]}>
-        <meshPhysicalMaterial color={base} roughness={0.32} clearcoat={0.8} clearcoatRoughness={0.25} />
+      <mesh position={[0, 0.03, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[BASE_R, BASE_R * 1.08, 0.06, 32]} />
+        <meshStandardMaterial color={base} roughness={0.45} />
       </mesh>
-      <mesh position={[0, 0.006, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.24, 0.3, 40]} />
+      <mesh position={[0, 0.002, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[BASE_R + 0.02, BASE_R + 0.07, 40]} />
         <meshBasicMaterial color={pawn.active ? '#FFC800' : light} transparent opacity={pawn.active ? 1 : 0} />
       </mesh>
-      <Html position={[0, 0.95, 0]} center distanceFactor={7} zIndexRange={[10, 0]} style={{ pointerEvents: 'none' }}>
-        <span
-          className="block rounded-full"
-          style={{
-            boxShadow: pawn.active ? `0 0 0 2.5px ${base}, 0 0 0 5px #FFC800` : `0 0 0 2.5px ${base}, 0 0 0 4.5px #fff`,
-            opacity: pawn.active ? 1 : 0.92,
-          }}
-        >
-          <AnimalFace animal={pawn.animal} size={30} />
-        </span>
-      </Html>
+      <mesh ref={face} position={[0, 0.06 + FIGURE_H / 2, 0]} castShadow>
+        <planeGeometry args={[FIGURE_W, FIGURE_H]} />
+        <meshStandardMaterial map={figure} alphaTest={0.5} side={THREE.DoubleSide} roughness={0.8} />
+      </mesh>
     </group>
   )
 }
@@ -159,10 +166,10 @@ function Egg3D({ team, stage, x }: { team: TeamId; stage: EggStage; x: number })
   return (
     <group ref={ref} position={[x, TOP, 0]}>
       <mesh geometry={shell} castShadow>
-        <meshPhysicalMaterial color="#FFF4E2" roughness={0.45} clearcoat={0.5} />
+        <meshStandardMaterial color="#FFF4E2" roughness={0.45} />
       </mesh>
       <mesh geometry={band} scale={[1.012, 1, 1.012]}>
-        <meshPhysicalMaterial color={TEAM_HEX[team][0]} roughness={0.4} clearcoat={0.5} />
+        <meshStandardMaterial color={TEAM_HEX[team][0]} roughness={0.4} />
       </mesh>
     </group>
   )
@@ -244,14 +251,20 @@ export default function Board3D({ pawns, eggs, focus, onArrive, className = '' }
   }, [])
   return (
     <div className={className.includes('absolute') ? className : `relative ${className}`} ref={box}>
-      <Canvas key={portrait ? 'p' : 'l'} shadows dpr={[1, 2]} camera={{ position: [0, 8.6, 6.4], fov: 36 }} gl={{ antialias: true, alpha: true }}>
+      <Canvas
+        key={portrait ? 'p' : 'l'}
+        shadows
+        dpr={[1, 1.5]}
+        camera={{ position: [0, 8.6, 6.4], fov: 36 }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      >
         <Fit portrait={portrait} />
         <hemisphereLight args={['#FFF8EC', '#C9B48E', 1.25]} />
         <directionalLight
           position={[-4, 9, 5]}
           intensity={1.6}
           castShadow
-          shadow-mapSize={[2048, 2048]}
+          shadow-mapSize={[1024, 1024]}
           shadow-camera-left={-6}
           shadow-camera-right={6}
           shadow-camera-top={6}
@@ -265,7 +278,7 @@ export default function Board3D({ pawns, eggs, focus, onArrive, className = '' }
             <Egg3D team="blue" stage={eggs.blue} x={-0.42} />
             <Egg3D team="red" stage={eggs.red} x={0.42} />
             {views.map((p) => (
-              <Pawn key={p.id} pawn={p} onArrive={p.id === focus ? onArrive : undefined} />
+              <Pawn key={p.id} pawn={p} portrait={portrait} onArrive={p.id === focus ? onArrive : undefined} />
             ))}
           </group>
         </Suspense>
