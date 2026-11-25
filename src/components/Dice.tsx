@@ -13,6 +13,8 @@ const FACES: { n: number; t: string }[] = [
   { n: 6, t: 'rotateY(180deg) translateZ(var(--h))' },
 ]
 
+const CORE_INSET = 0.05
+
 export function Die({ value, spins, size = 66, tilt = 1 }: { value: number; spins: number; size?: number; tilt?: number }) {
   const [x, y] = FACE_ROT[value] ?? [0, 0]
   const turn = spins * 360
@@ -28,11 +30,18 @@ export function Die({ value, spins, size = 66, tilt = 1 }: { value: number; spin
       >
         {FACES.map((f) => (
           <div
+            key={`core-${f.n}`}
+            className="absolute bg-[#E9E4DB]"
+            style={{ inset: size * CORE_INSET, transform: f.t.replace('var(--h)', `${size / 2 - size * CORE_INSET - 0.5}px`) }}
+          />
+        ))}
+        {FACES.map((f) => (
+          <div
             key={f.n}
             className="absolute inset-0 grid grid-cols-3 grid-rows-3 bg-white [backface-visibility:hidden]"
             style={{
               transform: f.t,
-              borderRadius: size * 0.24,
+              borderRadius: size * 0.2,
               padding: `${size * 0.15}px ${size * 0.15}px ${size * 0.19}px`,
               boxShadow: 'inset 0 -5px 0 #E9E4DB, 0 0 0 2px #E4DFD6',
             }}
