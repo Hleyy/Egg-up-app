@@ -108,7 +108,6 @@ export const en = {
     right: 'Right',
     wrong: 'Wrong',
     timeUp: "Time's up!",
-    listen: 'Listen again',
   },
   challenge: {
     title: 'Challenge!',
@@ -221,8 +220,6 @@ export const en = {
     languageDetail: 'Cards stay in English',
     sound: 'Sound',
     vibration: 'Vibration',
-    voice: 'Animal voice',
-    voiceDetail: 'The animal reads the question',
     answerTimer: 'Answer timer',
     answerTimerDetail: '30 seconds per question',
     keepAwake: 'Keep screen on',

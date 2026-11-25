@@ -9,7 +9,6 @@ export interface Settings {
   language: Language
   sound: boolean
   vibration: boolean
-  voice: boolean
   answerTimer: boolean
   keepAwake: boolean
   gameTimer: boolean
@@ -20,7 +19,6 @@ export const DEFAULT_SETTINGS: Settings = {
   language: 'en',
   sound: true,
   vibration: true,
-  voice: true,
   answerTimer: true,
   keepAwake: true,
   gameTimer: false,

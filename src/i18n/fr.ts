@@ -110,7 +110,6 @@ export const fr: Messages = {
     right: 'Juste',
     wrong: 'Faux',
     timeUp: 'Temps écoulé !',
-    listen: 'Réécouter',
   },
   challenge: {
     title: 'Défi !',
@@ -223,8 +222,6 @@ export const fr: Messages = {
     languageDetail: 'Les cartes restent en anglais',
     sound: 'Son',
     vibration: 'Vibration',
-    voice: "Voix de l'animal",
-    voiceDetail: "L'animal lit la question",
     answerTimer: 'Minuteur de réponse',
     answerTimerDetail: '30 secondes par question',
     keepAwake: 'Garder l’écran allumé',

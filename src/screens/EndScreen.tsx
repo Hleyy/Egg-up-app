@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useSpeech } from '../components/animals/useSpeech'
+import { useTalk } from '../components/animals/useTalk'
 import { Btn, Page } from '../components/ui'
 import { useLabels } from '../game/useView'
 import { en } from '../i18n/en'
@@ -41,10 +41,10 @@ function Stat({ label, value, suffix = '', c, d, delay }: { label: string; value
 
 export function EndScreen() {
   const { game, clearGame, elapsed } = useGame()
-  const { t, settings } = useSettings()
+  const { t } = useSettings()
   const labels = useLabels()
   const navigate = useNavigate()
-  const speech = useSpeech(settings.voice)
+  const speech = useTalk()
   const [phase, setPhase] = useState<'cheer' | 'result'>('cheer')
   const winner = game?.winner ?? null
   const creature = winner && game ? game.teams[winner].creature : 'bloom'

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { Animal } from '../components/animals/Animal'
-import { useSpeech } from '../components/animals/useSpeech'
+import { useTalk } from '../components/animals/useTalk'
 import { DicePair } from '../components/Dice'
 import { CardFrame, ScoreText } from '../components/TeamCard'
 import { BackButton, BottomPanel, Btn, Bubble, Page, Progress, Scene, TopBar } from '../components/ui'
@@ -22,7 +22,7 @@ export function WhoStartsScreen() {
   const [draft] = useState(() => loadDraft({ mode: 'teams', teams: null as never }))
   const [rolls, setRolls] = useState<Rolls>({ red: null, blue: null })
   const [tie, setTie] = useState(false)
-  const speech = useSpeech(settings.voice)
+  const speech = useTalk()
 
   const sum = (r: [number, number] | null) => (r ? r[0] + r[1] : 0)
   const done = rolls.red && rolls.blue && sum(rolls.red) !== sum(rolls.blue)

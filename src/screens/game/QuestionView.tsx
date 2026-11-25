@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animal } from '../../components/animals/Animal'
-import { useSpeech } from '../../components/animals/useSpeech'
-import { CheckIcon, ClockIcon, CloseIcon, SpeakerIcon, StarIcon } from '../../components/icons'
+import { useTalk } from '../../components/animals/useTalk'
+import { CheckIcon, ClockIcon, CloseIcon, StarIcon } from '../../components/icons'
 import { Burst } from '../../components/Burst'
 import { Avatar, Btn, PauseButton, Pill, Sheet, TopBar } from '../../components/ui'
 import { findCard } from '../../data/cards'
@@ -68,28 +68,21 @@ function SeasonWindow({
   season: Season
   host: AnimalId
   card: Card
-  speech: ReturnType<typeof useSpeech>
+  speech: ReturnType<typeof useTalk>
   cue: 'ask' | 'correct' | 'wrong'
   cueKey: string
 }) {
-  const { t } = useSettings()
   return (
     <div className="relative mt-4 aspect-[358/250] w-full overflow-hidden rounded-[24px] shadow-[inset_0_0_0_2px_rgba(255,255,255,.7),0_4px_0_#e5e5e5]">
       <div className="absolute inset-0 scale-110 bg-cover bg-[center_65%]" style={{ backgroundImage: `url(/decors/${season}.webp)` }} />
       <Animal animal={host} talking={speech.talking} viseme={speech.viseme} cue={cue} cueKey={cueKey} className="absolute bottom-[-4%] left-[3%] w-[40%]" />
-      <button
-        type="button"
-        onClick={() => speech.say([card.text.en, ...(card.choices?.en ?? [])].join(' '))}
-        className="anim-pop text-ink absolute top-[7%] right-[3%] w-[56%] rounded-[20px] bg-white px-4 py-3 text-left text-[clamp(15px,4.3vw,18px)] leading-snug shadow-[inset_0_0_0_2px_#e5e5e5,0_4px_0_#e5e5e5]"
-        aria-label={t('question.listen')}
-      >
+      <div className="anim-pop text-ink absolute top-[7%] right-[3%] w-[56%] rounded-[20px] bg-white px-4 py-3 text-left text-[clamp(15px,4.3vw,18px)] leading-snug shadow-[inset_0_0_0_2px_#e5e5e5,0_4px_0_#e5e5e5]">
         {card.text.en}
-        <SpeakerIcon className="text-blue mt-1 block size-4" />
         <svg className="absolute top-[45%] -left-[11px]" width="14" height="22" viewBox="0 0 14 22" aria-hidden="true">
           <path d="M14 1 L2 11 L14 21Z" fill="#fff" />
           <path d="M13 1 L2 11 L13 21" fill="none" stroke="#e5e5e5" strokeWidth="2" strokeLinejoin="round" />
         </svg>
-      </button>
+      </div>
     </div>
   )
 }
@@ -100,7 +93,7 @@ export function QuestionView() {
   const { t, settings, buzz } = useSettings()
   const { answer, challenge, next } = useGame()
   const labels = useLabels()
-  const speech = useSpeech(settings.voice)
+  const speech = useTalk()
   const [shown, setShown] = useState(false)
   const phase = game.phase
   const cardId = phase.kind === 'question' || phase.kind === 'feedback' ? phase.cardId : ''

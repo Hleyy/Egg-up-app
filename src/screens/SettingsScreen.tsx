@@ -60,9 +60,6 @@ export function SettingsScreen() {
         <Row title={t('settings.vibration')}>
           <Toggle label={t('settings.vibration')} on={settings.vibration} onChange={(vibration) => update({ vibration })} />
         </Row>
-        <Row title={t('settings.voice')} detail={t('settings.voiceDetail')}>
-          <Toggle label={t('settings.voice')} on={settings.voice} onChange={(voice) => update({ voice })} />
-        </Row>
       </Group>
       <Group title={t('settings.game')}>
         <Row title={t('settings.answerTimer')} detail={t('settings.answerTimerDetail')}>
