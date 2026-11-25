@@ -1,64 +1,12 @@
-import { useId, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { AnimalId, EggStage, TeamId } from '../game/types'
 import { AnimalFace } from './animals/AnimalFace'
 import { CARD_PALETTE } from '../theme/colors'
 import { EggInNest, type EggMood } from './Egg'
 import { StarIcon } from './icons'
 
-function Sparkle({ x, y, s }: { x: number; y: number; s: number }) {
-  return (
-    <path
-      transform={`translate(${x} ${y}) scale(${s})`}
-      d="M0 -5 C0.4 -1.2 1.2 -0.4 5 0 C1.2 0.4 0.4 1.2 0 5 C-0.4 1.2 -1.2 0.4 -5 0 C-1.2 -0.4 -0.4 -1.2 0 -5Z"
-      fill="#fff"
-      style={{ transformBox: 'fill-box', transformOrigin: 'center', animation: `twinkle 2.6s ease-in-out ${x % 3}s infinite` }}
-    />
-  )
-}
-
 export function CardFrame({ team, className = '' }: { team: TeamId; className?: string }) {
-  const p = CARD_PALETTE[team]
-  const id = useId().replace(/:/g, '')
-  return (
-    <svg viewBox="0 0 171 239" preserveAspectRatio="none" className={`absolute inset-0 size-full ${className}`} aria-hidden="true">
-      <defs>
-        <linearGradient id={`f${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor={p.frame[0]} />
-          <stop offset="1" stopColor={p.frame[1]} />
-        </linearGradient>
-        <linearGradient id={`i${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor={p.inner[0]} />
-          <stop offset="1" stopColor={p.inner[1]} />
-        </linearGradient>
-        <linearGradient id={`b1${id}`} x1="74" y1="98" x2="-62" y2="122" gradientUnits="userSpaceOnUse">
-          <stop stopColor={p.band1[0]} />
-          <stop offset="1" stopColor={p.band1[1]} />
-        </linearGradient>
-        <linearGradient id={`b2${id}`} x1="183" y1="207" x2="-74" y2="291" gradientUnits="userSpaceOnUse">
-          <stop stopColor={p.band2[0]} />
-          <stop offset=".5" stopColor={p.band2[1]} />
-          <stop offset="1" stopColor={p.band2[2]} />
-        </linearGradient>
-        <linearGradient id={`b3${id}`} x1="262" y1="310" x2="7" y2="316" gradientUnits="userSpaceOnUse">
-          <stop stopColor={p.band3[0]} />
-          <stop offset="1" stopColor={p.band3[1]} />
-        </linearGradient>
-        <clipPath id={`c${id}`}>
-          <rect x="10" y="18.7" width="150.4" height="211.3" rx="14" />
-        </clipPath>
-      </defs>
-      <rect x="1" y="1" width="169" height="236.8" rx="14" fill={`url(#f${id})`} stroke={p.stroke} strokeWidth="2" />
-      <rect x="10" y="18.7" width="150.4" height="211.3" rx="14" fill={`url(#i${id})`} />
-      <g clipPath={`url(#c${id})`}>
-        <rect x="-58.5" y="78" width="153.5" height="62.8" transform="rotate(-45.1 -58.5 78)" fill={`url(#b1${id})`} />
-        <rect x="5.3" y="273.6" width="312.7" height="85.4" transform="rotate(-45.1 5.3 273.6)" fill={`url(#b3${id})`} />
-        <rect x="-71.4" y="178.8" width="312.1" height="123.6" transform="rotate(-45.1 -71.4 178.8)" fill={`url(#b2${id})`} />
-      </g>
-      <rect x="10" y="18.7" width="150.4" height="211.3" rx="14" fill="none" stroke={p.innerLine} strokeWidth="2" />
-      <Sparkle x={127.5} y={67} s={1.1} />
-      <Sparkle x={38.4} y={145.8} s={0.75} />
-    </svg>
-  )
+  return <img src={`/cards/team-${team}.svg`} alt="" className={`absolute inset-0 size-full ${className}`} />
 }
 
 export function NestRing({

@@ -18,13 +18,7 @@ export const EGG_COLOR: Record<TeamId, { c: string; d: string }> = {
 }
 
 export interface Palette {
-  frame: [string, string]
   stroke: string
-  inner: [string, string]
-  innerLine: string
-  band1: [string, string]
-  band2: [string, string, string]
-  band3: [string, string]
   pill: string
   pillLine: string
   ring: string
@@ -35,13 +29,7 @@ export interface Palette {
 
 export const CARD_PALETTE: Record<TeamId, Palette> = {
   blue: {
-    frame: ['#00C4EB', '#00EBD8'],
     stroke: '#0095C0',
-    inner: ['#B3FAFF', '#EBFFFE'],
-    innerLine: '#D7FDFD',
-    band1: ['#FDFDFE', '#D7D8FC'],
-    band2: ['#FDFDFD', '#DCDBFA', '#B4F2F9'],
-    band3: ['#CFD0FB', '#98E9FB'],
     pill: '#8DF6F8',
     pillLine: '#D6FBFD',
     ring: '#00C5EA',
@@ -50,13 +38,7 @@ export const CARD_PALETTE: Record<TeamId, Palette> = {
     bar: '#00C5EA',
   },
   red: {
-    frame: ['#FF4B4B', '#FF8A6B'],
     stroke: '#D93636',
-    inner: ['#FFD3CE', '#FFF3F1'],
-    innerLine: '#FFE3E0',
-    band1: ['#FFFDFD', '#FCD9DE'],
-    band2: ['#FFFDFD', '#FADCE2', '#F9C6BF'],
-    band3: ['#FBD2DA', '#FBB0A6'],
     pill: '#FFA69C',
     pillLine: '#FFDCD8',
     ring: '#FF4B4B',

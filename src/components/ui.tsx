@@ -65,28 +65,6 @@ export function SeasonPill({ season, children }: { season: Season; children: Rea
   )
 }
 
-function FlagEn() {
-  return (
-    <svg viewBox="0 0 60 40" className="block size-full">
-      <rect width="60" height="40" fill="#2B4C9B" />
-      <path d="M0 0L60 40M60 0L0 40" stroke="#fff" strokeWidth="9" />
-      <path d="M0 0L60 40M60 0L0 40" stroke="#D84B4B" strokeWidth="3.5" />
-      <path d="M30 0V40M0 20H60" stroke="#fff" strokeWidth="13" />
-      <path d="M30 0V40M0 20H60" stroke="#D84B4B" strokeWidth="7" />
-    </svg>
-  )
-}
-
-function FlagFr() {
-  return (
-    <svg viewBox="0 0 60 40" className="block size-full">
-      <rect width="20" height="40" fill="#2B4C9B" />
-      <rect x="20" width="20" height="40" fill="#fff" />
-      <rect x="40" width="20" height="40" fill="#D84B4B" />
-    </svg>
-  )
-}
-
 export function Flags() {
   const { settings, update } = useSettings()
   return (
@@ -103,7 +81,7 @@ export function Flags() {
             onClick={() => update({ language: lang })}
             className={`h-[26px] w-[34px] overflow-hidden rounded-lg transition ${on ? '-translate-y-px opacity-100 shadow-[0_0_0_2.5px_#1CB0F6,0_3px_0_#1899D6]' : 'opacity-55 shadow-[0_0_0_2px_#E5E5E5,0_3px_0_#E5E5E5]'}`}
           >
-            {lang === 'en' ? <FlagEn /> : <FlagFr />}
+            <img src={`/flags/${lang}.svg`} alt="" className="block size-full" />
           </button>
         )
       })}

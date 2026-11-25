@@ -4,7 +4,7 @@ import { useTalk } from '../components/animals/useTalk'
 import { Btn, Page } from '../components/ui'
 import { useLabels } from '../game/useView'
 import { en } from '../i18n/en'
-import { EGG_COLOR, TEAM_COLOR } from '../theme/colors'
+import { TEAM_COLOR } from '../theme/colors'
 import { useGame } from '../game/useGame'
 import { useSettings } from '../settings/useSettings'
 
@@ -122,10 +122,7 @@ export function EndScreen() {
               <img src={`/creatures/${creature}.svg`} alt={t(`creature.${creature}`)} className="w-full" draggable={false} />
             </div>
           </div>
-          <svg viewBox="0 0 200 80" className="-mt-[18%] w-full" aria-hidden="true">
-            <path d="M8 18 L30 4 L52 18 L74 2 L100 16 L126 2 L148 18 L170 4 L192 18 C192 60 150 78 100 78 C50 78 8 60 8 18Z" fill="#FFF4E2" />
-            <path d="M8 34 C40 30 70 38 100 34 C130 30 160 38 192 34 C186 64 148 78 100 78 C52 78 14 64 8 34Z" fill={EGG_COLOR[winner].c} />
-          </svg>
+          <img src={`/img/eggshell-${winner}.svg`} alt="" className="-mt-[18%] w-full" />
         </div>
       )}
       <div className="relative z-10 mt-auto grid grid-cols-2 gap-3 pt-6">
