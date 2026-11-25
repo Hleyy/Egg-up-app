@@ -65,6 +65,7 @@ export const fr: Messages = {
     roll: 'Lancer les dés',
   },
   game: {
+    clock: 'Temps de jeu',
     round: '{season} · Tour {n}',
     yourTurn: 'À toi',
     turnOf: 'Au tour de {name}',

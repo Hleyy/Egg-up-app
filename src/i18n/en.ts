@@ -63,6 +63,7 @@ export const en = {
     roll: 'Roll the dice',
   },
   game: {
+    clock: 'Game time',
     round: '{season} · Round {n}',
     yourTurn: 'Your turn',
     turnOf: "{name}'s turn",

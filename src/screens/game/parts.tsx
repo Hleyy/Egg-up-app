@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { TeamCard } from '../../components/TeamCard'
 import type { EggMood } from '../../components/Egg'
-import { MapIcon } from '../../components/icons'
+import { ClockIcon, MapIcon } from '../../components/icons'
+import { formatClock } from '../../lib/format'
+import { useGame } from '../../game/useGame'
 import { Flags, IconBtn, PauseButton, SeasonPill, TopBar } from '../../components/ui'
 import { GOAL_POINTS, eggStageOf, TEAM_IDS } from '../../game/rules'
 import { useLabels } from '../../game/useView'
@@ -9,13 +11,34 @@ import type { GameState, Season, SquareType, TeamId } from '../../game/types'
 import { currentPlayer } from '../../game/selectors'
 import { useSettings } from '../../settings/useSettings'
 
+function GameClock() {
+  const { remaining, elapsed } = useGame()
+  const { t } = useSettings()
+  const urgent = remaining !== null && remaining < 120_000
+  return (
+    <span
+      role="timer"
+      aria-label={t('game.clock')}
+      className={`glass font-display flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[13px] tabular-nums [&>svg]:size-3.5 ${urgent ? 'text-red animate-pulse' : 'text-ink'}`}
+    >
+      <ClockIcon />
+      {formatClock(remaining ?? elapsed)}
+    </span>
+  )
+}
+
 export function GameHeader({ game, season, board = true }: { game: GameState; season: Season; board?: boolean }) {
   const { t } = useSettings()
   const navigate = useNavigate()
   return (
     <TopBar
       left={<PauseButton />}
-      center={<SeasonPill season={season}>{t('game.round', { season: t(`season.${season}`), n: game.round })}</SeasonPill>}
+      center={
+        <div className="flex flex-col items-center gap-1">
+          <SeasonPill season={season}>{t('game.round', { season: t(`season.${season}`), n: game.round })}</SeasonPill>
+          <GameClock />
+        </div>
+      }
       right={
         <div className="flex items-center gap-2">
           {board && (
