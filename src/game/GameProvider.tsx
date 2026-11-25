@@ -6,6 +6,7 @@ import { loadGame, saveGame } from './storage'
 import { addRecord, loadHistory, saveHistory, toRecord, type GameRecord } from './history'
 import { rollDice } from './rules'
 import type { GameState } from './types'
+import { useSettings } from '../settings/useSettings'
 import { GameContext, type GameApi, type GameCommand } from './useGame'
 
 const UNDO_LIMIT = 20
@@ -13,6 +14,11 @@ const UNDO_LIMIT = 20
 interface Store {
   game: GameState | null
   history: GameState[]
+}
+
+function withPlayerNames(game: GameState | null, fallback: (n: number) => string): GameState | null {
+  if (!game || game.players.every((p) => p.name)) return game
+  return { ...game, players: game.players.map((p) => (p.name ? p : { ...p, name: fallback(Number(p.id.split('-')[1]) || 1) })) }
 }
 
 const NOT_UNDOABLE = new Set<GameAction['type']>(['tick', 'pause', 'resume'])
@@ -24,9 +30,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   })
   const [now, setNow] = useState(() => Date.now())
 
-  const game = store.game
+  const { t } = useSettings()
+  const game = useMemo(() => withPlayerNames(store.game, (n) => t('setup.player', { n })), [store.game, t])
 
-  useEffect(() => saveGame(game), [game])
+  useEffect(() => saveGame(store.game), [store.game])
 
   const [records, setRecords] = useState<GameRecord[]>(loadHistory)
   const finishedRecord = game ? toRecord(game) : null

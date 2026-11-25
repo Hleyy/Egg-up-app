@@ -30,7 +30,7 @@ export function createGame(setup: GameSetup, now: number, random: () => number =
   } else {
     const make = (team: TeamId, i: number): Player => ({
       id: `${team}-${i + 1}`,
-      name: setup.teams[team].players[i]?.trim() || `Player ${i + 1}`,
+      name: setup.teams[team].players[i]?.trim() ?? '',
       team,
       pawn: `${team}-${i + 1}`,
       animal: animalFor(team, i),

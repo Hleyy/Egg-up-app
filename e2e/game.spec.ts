@@ -69,6 +69,23 @@ test('resume goes back to the game', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Roll the dice' }).last()).toBeVisible()
 })
 
+test('french names default players joueur', async ({ page }) => {
+  await page.getByRole('button', { name: 'Settings' }).click()
+  await page.getByRole('button', { name: 'Français' }).click()
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Nouvelle partie' }).click()
+  await page.getByRole('radio', { name: /4 joueurs/i }).click()
+  await page.getByRole('button', { name: 'Continuer' }).click()
+  const lets = page.getByRole('button', { name: "C'est parti" })
+  for (let i = 0; i < 12 && !(await lets.isVisible()); i++) {
+    await page.getByRole('button', { name: /Lancer les dés/ }).first().click()
+    await page.waitForTimeout(1600)
+  }
+  await lets.click()
+  await expect(page.getByText(/Joueur \d/).first()).toBeVisible()
+  await expect(page.getByText(/Player \d/)).toHaveCount(0)
+})
+
 test('french switches the interface', async ({ page }) => {
   await page.getByRole('button', { name: 'Settings' }).click()
   await page.getByRole('button', { name: 'Français' }).click()
