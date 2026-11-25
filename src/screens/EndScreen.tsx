@@ -125,7 +125,7 @@ export function EndScreen() {
           <img src={`/img/eggshell-${winner}.svg`} alt="" className="-mt-[18%] w-full" />
         </div>
       )}
-      <div className="relative z-10 mt-auto grid grid-cols-2 gap-3 pt-6">
+      <div className={`relative z-10 mt-auto grid gap-3 pt-6 ${team ? 'grid-cols-2' : 'mx-auto w-1/2 grid-cols-1'}`}>
         {team && (
           <>
             <Stat label={t('end.points')} value={team.score} c="#FFC800" d="#E0A800" delay={1400} />
