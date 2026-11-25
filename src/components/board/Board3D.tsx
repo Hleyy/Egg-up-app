@@ -83,15 +83,15 @@ interface PawnView extends BoardPawn {
 }
 
 const BASE_R = 0.17
-const FIGURE_H = 0.8
-const FIGURE_W = FIGURE_H * (1004 / 1752)
+const FIGURE_H = 0.95
+const FIGURE_SLOT = FIGURE_H * 0.76
 const ROW = 0.95
 const GAP = 0.04
 
 function layout(slot: number, slots: number, portrait: boolean): { x: number; z: number; scale: number } {
   if (slots <= 1) return { x: 0, z: 0, scale: 1 }
-  const scale = Math.min(1, (ROW / slots - GAP) / FIGURE_W)
-  const along = (slot - (slots - 1) / 2) * (FIGURE_W * scale + GAP)
+  const scale = Math.min(1, (ROW / slots - GAP) / FIGURE_SLOT)
+  const along = (slot - (slots - 1) / 2) * (FIGURE_SLOT * scale + GAP)
   return portrait ? { x: 0, z: along, scale } : { x: along, z: 0, scale }
 }
 
@@ -101,7 +101,9 @@ function Pawn({ pawn, portrait, onArrive }: { pawn: PawnView; portrait: boolean;
   const hop = useRef(0)
   const face = useRef<THREE.Mesh>(null)
   const eye = useMemo(() => new THREE.Vector3(), [])
-  const figure = useTexture(`/animals/${pawn.animal}.svg`, prepareTexture)
+  const figure = useTexture(`/pawns/${pawn.animal}.svg`, prepareTexture)
+  const image = figure.image as { width: number; height: number }
+  const figureW = FIGURE_H * (image.width / image.height)
   const [base, light] = TEAM_HEX[pawn.team]
   const spot = useMemo(() => layout(pawn.slot, pawn.slots, portrait), [pawn.slot, pawn.slots, portrait])
 
@@ -143,8 +145,8 @@ function Pawn({ pawn, portrait, onArrive }: { pawn: PawnView; portrait: boolean;
         <meshBasicMaterial color={pawn.active ? '#FFC800' : light} transparent opacity={pawn.active ? 1 : 0} />
       </mesh>
       <mesh ref={face} position={[0, 0.06 + FIGURE_H / 2, 0]} castShadow>
-        <planeGeometry args={[FIGURE_W, FIGURE_H]} />
-        <meshStandardMaterial map={figure} alphaTest={0.5} side={THREE.DoubleSide} roughness={0.8} />
+        <planeGeometry args={[figureW, FIGURE_H]} />
+        <meshBasicMaterial map={figure} alphaTest={0.4} side={THREE.DoubleSide} toneMapped={false} />
       </mesh>
     </group>
   )
@@ -254,7 +256,7 @@ export default function Board3D({ pawns, eggs, focus, onArrive, className = '' }
       <Canvas
         key={portrait ? 'p' : 'l'}
         shadows
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         camera={{ position: [0, 8.6, 6.4], fov: 36 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
