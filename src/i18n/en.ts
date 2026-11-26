@@ -74,7 +74,7 @@ export const en = {
     keptHint: 'Kept bonus: {n} · Use it from the team card',
     classHint: 'Whole class · one pawn per group',
     teamsHint: '{name} · {team}',
-    moveTitle: 'Move {name} {n} squares',
+    moveTitle: 'Move {name}, {n} squares',
     moveDetail: 'From square {from} to square {to}, clockwise.',
     landOn: 'You land on',
     fix: 'Not the right square? Fix it',
