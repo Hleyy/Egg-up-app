@@ -6,6 +6,7 @@ import { SQUARES } from '../../data/board'
 import { squareOf } from '../../game/rules'
 import type { EggStage, TeamId } from '../../game/types'
 import type { BoardPawn } from './types'
+import { Egg3D } from './Egg3D'
 
 const W = 8.48
 const H = 6
@@ -60,21 +61,6 @@ function BoardSlab() {
       </mesh>
     </group>
   )
-}
-
-function eggShape(bottomOnly = false): THREE.Vector2[] {
-  const out: THREE.Vector2[] = []
-  const steps = 28
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps
-    const a = -Math.PI / 2 + t * Math.PI
-    const y = Math.sin(a)
-    const k = y > 0 ? 0.82 : 1
-    const r = Math.cos(a) * (1 - 0.18 * y) * k
-    if (bottomOnly && y > -0.15) break
-    out.push(new THREE.Vector2(Math.max(0, r) * 0.3, (y + 1) * 0.38))
-  }
-  return out
 }
 
 interface PawnView extends BoardPawn {
@@ -151,31 +137,6 @@ function Pawn({ pawn, portrait, onArrive }: { pawn: PawnView; portrait: boolean;
       <mesh ref={face} position={[0, 0.06 + FIGURE_H / 2, 0]} castShadow>
         <planeGeometry args={[figureW, FIGURE_H]} />
         <meshBasicMaterial map={figure} alphaTest={0.4} side={THREE.DoubleSide} toneMapped={false} />
-      </mesh>
-    </group>
-  )
-}
-
-function Egg3D({ team, stage, x }: { team: TeamId; stage: EggStage; x: number }) {
-  const ref = useRef<THREE.Group>(null)
-  const shell = useMemo(() => new THREE.LatheGeometry(eggShape(), 48), [])
-  const band = useMemo(() => new THREE.LatheGeometry(eggShape(true), 48), [])
-  const size = 0.75 + stage * 0.08
-  useFrame(({ clock }) => {
-    const g = ref.current
-    if (!g) return
-    const t = clock.elapsedTime + (team === 'red' ? 0.7 : 0)
-    const wob = stage >= 1 ? Math.sin(t * (2 + stage)) * 0.04 * stage : 0
-    g.rotation.z = wob
-    g.scale.set(size * (1 + Math.sin(t * 2) * 0.012), size * (1 - Math.sin(t * 2) * 0.012), size)
-  })
-  return (
-    <group ref={ref} position={[x, TOP, 0]}>
-      <mesh geometry={shell} castShadow>
-        <meshStandardMaterial color="#FFF4E2" roughness={0.45} />
-      </mesh>
-      <mesh geometry={band} scale={[1.012, 1, 1.012]}>
-        <meshStandardMaterial color={TEAM_HEX[team][0]} roughness={0.4} />
       </mesh>
     </group>
   )
@@ -281,8 +242,8 @@ export default function Board3D({ pawns, eggs, focus, onArrive, className = '' }
         <Suspense fallback={null}>
           <group rotation={[0, portrait ? Math.PI / 2 : 0, 0]}>
             <BoardSlab />
-            <Egg3D team="blue" stage={eggs.blue} x={-0.42} />
-            <Egg3D team="red" stage={eggs.red} x={0.42} />
+            <Egg3D team="blue" stage={eggs.blue} color={TEAM_HEX.blue[0]} position={[-0.42, TOP, 0]} />
+            <Egg3D team="red" stage={eggs.red} color={TEAM_HEX.red[0]} position={[0.42, TOP, 0]} />
             {views.map((p) => (
               <Pawn key={p.id} pawn={p} portrait={portrait} onArrive={p.id === focus ? onArrive : undefined} />
             ))}
