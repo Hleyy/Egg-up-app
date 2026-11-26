@@ -45,7 +45,7 @@ export function EggInNest({
       <image href="/img/nest.webp" x="0" y="-10" width="320" height="320" />
       <g transform="translate(100 18) scale(1)">
         <g key={moodKey} className={MOOD_CLASS[effective]} style={{ transformBox: 'fill-box' }}>
-          <image href={`/eggs/${team}-${stage}.svg`} width="120" height="162" />
+          <image href={`/eggs/${team}-${stage}.svg`} x="-10" y="-9" width="140" height="174" />
         </g>
       </g>
       <image href="/img/nest.webp" x="0" y="-10" width="320" height="320" clipPath={`url(#front${id})`} />
