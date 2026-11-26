@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Animal } from '../../components/animals/Animal'
 import { useTalk } from '../../components/animals/useTalk'
-import { CheckIcon, ClockIcon, CloseIcon, StarIcon } from '../../components/icons'
+import { CheckIcon, ClockIcon, CloseIcon, QrIcon, StarIcon } from '../../components/icons'
 import { Burst } from '../../components/Burst'
 import { Avatar, Btn, PauseButton, Pill, Sheet, TopBar } from '../../components/ui'
 import { findCard } from '../../data/cards'
@@ -92,6 +93,7 @@ export function QuestionView() {
   const { game, player, season } = turn
   const { t, settings, buzz, play } = useSettings()
   const { answer, challenge, next } = useGame()
+  const navigate = useNavigate()
   const labels = useLabels()
   const speech = useTalk()
   const [shown, setShown] = useState(false)
@@ -178,10 +180,20 @@ export function QuestionView() {
       )}
 
       {isChallenge ? (
-        <div className="bg-yellow-soft mt-4 flex items-center gap-2.5 rounded-2xl px-4 py-3 text-[15px] text-[#9A6B00] shadow-[inset_0_0_0_2px_#FFE58A,0_3px_0_#FFE58A]">
-          <StarIcon className="text-yellow size-6" />
-          {t('challenge.stake', { n: POINTS.challenge })}
-        </div>
+        <>
+          <div className="bg-yellow-soft mt-4 flex items-center gap-2.5 rounded-2xl px-4 py-3 text-[15px] text-[#9A6B00] shadow-[inset_0_0_0_2px_#FFE58A,0_3px_0_#FFE58A]">
+            <StarIcon className="text-yellow size-6" />
+            {t('challenge.stake', { n: POINTS.challenge })}
+          </div>
+          <button
+            type="button"
+            className="tile text-blue mt-3 flex items-center justify-center gap-2 py-3.5 text-[15px] active:translate-y-1"
+            onClick={() => navigate('/ar')}
+          >
+            <QrIcon className="size-5" />
+            {t('ar.open')}
+          </button>
+        </>
       ) : reveal ? (
         <div className="anim-rise bg-mist mt-4 rounded-2xl px-4 py-3 shadow-[inset_0_0_0_2px_#ececec]">
           <div className="kicker text-sub text-[11px]">{t('question.answer')}</div>
