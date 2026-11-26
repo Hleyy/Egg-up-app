@@ -482,18 +482,6 @@ button {
     transform: scale(0.6) rotate(70deg);
   }
 }
-@keyframes dice-shake {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  25% {
-    transform: rotate(-6deg);
-  }
-  75% {
-    transform: rotate(6deg);
-  }
-}
 
 .anim-breathe {
   transform-origin: 50% 95%;

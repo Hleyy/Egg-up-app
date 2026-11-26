@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { hasWebGL } from './board/loadBoard3D'
 
 const Dice3D = lazy(() => import('./Dice3D'))
@@ -89,12 +89,6 @@ export function DicePair({
 }) {
   const spins = useDiceSpin(values)
   const [webgl] = useState(hasWebGL)
-  const [shake, setShake] = useState(false)
-  useEffect(() => {
-    if (!onRoll) return
-    const id = window.setInterval(() => setShake((s) => !s), 2600)
-    return () => window.clearInterval(id)
-  }, [onRoll])
   const shown: [number, number] = values ?? [3, 5]
   const flat = (
     <span className="flex items-center gap-[18%]">
@@ -102,14 +96,14 @@ export function DicePair({
         <Die value={shown[0]} spins={spins} size={size} />
       </span>
       <span className="translate-y-[-10%] rotate-6">
-        <Die value={shown[1]} spins={spins + 1} size={size} tilt={-1} />
+        <Die value={shown[1]} spins={spins && spins + 1} size={size} tilt={-1} />
       </span>
     </span>
   )
   const content = (
-    <span className="block" style={{ animation: onRoll && shake ? 'dice-shake .5s ease-in-out' : undefined }}>
+    <span className="block">
       {webgl ? (
-        <Suspense fallback={flat}>
+        <Suspense fallback={<span className="block" style={{ width: size * 2.7, height: size * 1.7 }} />}>
           <Dice3D values={shown} spins={spins} size={size} />
         </Suspense>
       ) : (

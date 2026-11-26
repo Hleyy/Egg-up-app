@@ -96,7 +96,7 @@ export default function Dice3D({ values, spins, size }: { values: [number, numbe
         <ambientLight intensity={2.1} />
         <directionalLight position={[-3, 5, 6]} intensity={1.8} />
         <Die value={values[0]} spins={spins} x={-0.8} tilt={1} />
-        <Die value={values[1]} spins={spins + 1} x={0.8} tilt={-1} />
+        <Die value={values[1]} spins={spins} x={0.8} tilt={-1} />
       </Canvas>
     </div>
   )
