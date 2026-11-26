@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { EggInNest } from '../../components/Egg'
 import { BagIcon, BoltIcon, StarIcon } from '../../components/icons'
 import { BottomPanel, Btn } from '../../components/ui'
@@ -9,6 +10,19 @@ import { GameHeader } from './parts'
 import { TEAM_COLOR } from '../../theme/colors'
 import { useGame } from '../../game/useGame'
 import { useSettings } from '../../settings/useSettings'
+const CUES = {
+  bonus: [15, 30, 15],
+  malus: [80, 50, 80],
+}
+
+function useCardCue(kind: keyof typeof CUES, cardId: string | null) {
+  const { buzz, play } = useSettings()
+  useEffect(() => {
+    if (!cardId) return
+    buzz(CUES[kind])
+    play(kind)
+  }, [kind, cardId, buzz, play])
+}
 
 function BigCard({ card, kind }: { card: Card; kind: 'bonus' | 'malus' }) {
   const { t, settings } = useSettings()
@@ -61,6 +75,7 @@ export function BonusView() {
   const { t } = useSettings()
   const { bonus } = useGame()
   const labels = useLabels()
+  useCardCue('bonus', game.phase.kind === 'bonus' ? game.phase.cardId : null)
   if (game.phase.kind !== 'bonus') return null
   const card = findCard(game.phase.cardId)
   if (!card) return null
@@ -105,6 +120,7 @@ export function MalusView() {
   const { t } = useSettings()
   const { malus } = useGame()
   const labels = useLabels()
+  useCardCue('malus', game.phase.kind === 'malus' ? game.phase.cardId : null)
   if (game.phase.kind !== 'malus') return null
   const card = findCard(game.phase.cardId)
   if (!card) return null
