@@ -112,7 +112,7 @@ export function SpringView() {
 export function HatchView() {
   const turn = useTurn()!
   const { game } = turn
-  const { t, buzz } = useSettings()
+  const { t, buzz, play } = useSettings()
   const { hatch } = useGame()
   const labels = useLabels()
   const [taps, setTaps] = useState(0)
@@ -129,6 +129,7 @@ export function HatchView() {
     if (taps >= 3) return
     const n = taps + 1
     buzz(n === 3 ? [40, 60, 80] : 30)
+    play(n === 3 ? 'hatch' : 'crack')
     setTaps(n)
     if (n === 3) window.setTimeout(hatch, 900)
   }

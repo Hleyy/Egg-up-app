@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { DEFAULT_SETTINGS, MESSAGES, SETTINGS_KEY, SettingsContext, loadSettings, translate, type Settings, type SettingsApi } from './useSettings'
+import { playSound } from './sounds'
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(loadSettings)
@@ -23,6 +24,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       t: (key, vars) => translate(messages, key, vars),
       buzz: (pattern = 15) => {
         if (settings.vibration && 'vibrate' in navigator) navigator.vibrate(pattern)
+      },
+      play: (sound) => {
+        if (settings.sound) playSound(sound)
       },
     }
   }, [settings, update, reset])

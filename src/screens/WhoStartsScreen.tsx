@@ -16,7 +16,7 @@ import { useSettings } from '../settings/useSettings'
 type Rolls = Record<TeamId, [number, number] | null>
 
 export function WhoStartsScreen() {
-  const { t, settings, buzz } = useSettings()
+  const { t, settings, buzz, play } = useSettings()
   const { newGame } = useGame()
   const navigate = useNavigate()
   const [draft] = useState(() => loadDraft({ mode: 'teams', teams: null as never }))
@@ -49,6 +49,7 @@ export function WhoStartsScreen() {
   const roll = (team: TeamId) => {
     if (rolls[team] && !tie) return
     buzz(20)
+    play('dice')
     const value = rollDice()
     setRolls((r) => {
       const base = tie ? { red: null, blue: null } : r

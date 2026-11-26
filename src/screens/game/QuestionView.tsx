@@ -90,7 +90,7 @@ function SeasonWindow({
 export function QuestionView() {
   const turn = useTurn()!
   const { game, player, season } = turn
-  const { t, settings, buzz } = useSettings()
+  const { t, settings, buzz, play } = useSettings()
   const { answer, challenge, next } = useGame()
   const labels = useLabels()
   const speech = useTalk()
@@ -128,6 +128,7 @@ export function QuestionView() {
   const judge = (correct: boolean) => {
     speech.stop()
     buzz(correct ? [20, 60, 30] : [60, 40, 60])
+    play(correct ? 'right' : 'wrong')
     answer(correct)
   }
 

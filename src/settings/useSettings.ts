@@ -1,6 +1,7 @@
 import { createContext, useContext } from 'react'
 import { en, type Messages } from '../i18n/en'
 import { fr } from '../i18n/fr'
+import type { Sound } from './sounds'
 import { DEFAULT_TIMER_MINUTES, MAX_TIMER_MINUTES, MIN_TIMER_MINUTES } from '../game/rules'
 
 export type Language = 'en' | 'fr'
@@ -40,6 +41,7 @@ export interface SettingsApi {
   reset: () => void
   t: TFunction
   buzz: (pattern?: number | number[]) => void
+  play: (sound: Sound) => void
 }
 
 export const SettingsContext = createContext<SettingsApi | null>(null)

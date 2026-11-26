@@ -16,7 +16,7 @@ import { useSettings } from '../../settings/useSettings'
 export function RollView() {
   const turn = useTurn()!
   const { game, player, pawn, season } = turn
-  const { t, buzz } = useSettings()
+  const { t, buzz, play } = useSettings()
   const { dispatch } = useGame()
   const labels = useLabels()
   const [rolling, setRolling] = useState<[number, number] | null>(null)
@@ -26,6 +26,7 @@ export function RollView() {
     if (rolling) return
     const dice = rollDice()
     buzz([18, 40, 18])
+    play('dice')
     setRolling(dice)
     window.setTimeout(() => dispatch({ type: 'roll', dice }), 1150)
   }

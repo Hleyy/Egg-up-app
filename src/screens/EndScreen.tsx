@@ -41,7 +41,7 @@ function Stat({ label, value, suffix = '', c, d, delay }: { label: string; value
 
 export function EndScreen() {
   const { game, clearGame, elapsed } = useGame()
-  const { t } = useSettings()
+  const { t, play } = useSettings()
   const labels = useLabels()
   const navigate = useNavigate()
   const speech = useTalk()
@@ -55,6 +55,9 @@ export function EndScreen() {
     const id = window.setTimeout(() => setPhase('result'), 1300)
     return () => window.clearTimeout(id)
   }, [])
+  useEffect(() => {
+    if (winner) play('win')
+  }, [winner, play])
   useEffect(() => {
     if (!winner) return
     const id = window.setTimeout(() => say(`It's ${en.creature[creature]}, ${en.creatureAbout[creature]}!`), 600)
