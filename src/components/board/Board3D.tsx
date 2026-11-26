@@ -242,8 +242,8 @@ export default function Board3D({ pawns, eggs, focus, onArrive, className = '' }
         <Suspense fallback={null}>
           <group rotation={[0, portrait ? Math.PI / 2 : 0, 0]}>
             <BoardSlab />
-            <Egg3D team="blue" stage={eggs.blue} color={TEAM_HEX.blue[0]} position={[-0.42, TOP, 0]} />
-            <Egg3D team="red" stage={eggs.red} color={TEAM_HEX.red[0]} position={[0.42, TOP, 0]} />
+            <Egg3D team="blue" stage={eggs.blue} position={[-0.42, TOP, 0]} />
+            <Egg3D team="red" stage={eggs.red} position={[0.42, TOP, 0]} />
             {views.map((p) => (
               <Pawn key={p.id} pawn={p} portrait={portrait} onArrive={p.id === focus ? onArrive : undefined} />
             ))}

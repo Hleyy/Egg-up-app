@@ -1,39 +1,30 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { Billboard, useGLTF, useTexture } from '@react-three/drei'
 import * as THREE from 'three'
 import { assetExists } from '../../lib/assetExists'
 import type { EggStage, TeamId } from '../../game/types'
 
 const EGG_H = 0.76
+const SPRITE_H = 1.25
 
-function eggShape(bottomOnly = false): THREE.Vector2[] {
-  const out: THREE.Vector2[] = []
-  const steps = 28
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps
-    const a = -Math.PI / 2 + t * Math.PI
-    const y = Math.sin(a)
-    const k = y > 0 ? 0.82 : 1
-    const r = Math.cos(a) * (1 - 0.18 * y) * k
-    if (bottomOnly && y > -0.15) break
-    out.push(new THREE.Vector2(Math.max(0, r) * 0.3, ((y + 1) * EGG_H) / 2))
-  }
-  return out
+function prepare(texture: THREE.Texture) {
+  texture.colorSpace = THREE.SRGBColorSpace
+  texture.anisotropy = 4
+  texture.needsUpdate = true
 }
 
-function ShapeEgg({ color }: { color: string }) {
-  const shell = useMemo(() => new THREE.LatheGeometry(eggShape(), 48), [])
-  const band = useMemo(() => new THREE.LatheGeometry(eggShape(true), 48), [])
+function SpriteEgg({ team, stage }: { team: TeamId; stage: EggStage }) {
+  const texture = useTexture(`/eggs/${team}-${stage}.svg`, prepare)
+  const image = texture.image as { width: number; height: number }
+  const width = SPRITE_H * (image.width / image.height)
   return (
-    <>
-      <mesh geometry={shell} castShadow>
-        <meshStandardMaterial color="#FFF4E2" roughness={0.45} />
+    <Billboard>
+      <mesh position={[0, SPRITE_H / 2, 0]} castShadow>
+        <planeGeometry args={[width, SPRITE_H]} />
+        <meshBasicMaterial map={texture} alphaTest={0.4} side={THREE.DoubleSide} toneMapped={false} />
       </mesh>
-      <mesh geometry={band} scale={[1.012, 1, 1.012]}>
-        <meshStandardMaterial color={color} roughness={0.4} />
-      </mesh>
-    </>
+    </Billboard>
   )
 }
 
@@ -67,7 +58,7 @@ function useModel(src: string): boolean {
   return found?.src === src && found.ok
 }
 
-export function Egg3D({ team, stage, color, position }: { team: TeamId; stage: EggStage; color: string; position: [number, number, number] }) {
+export function Egg3D({ team, stage, position }: { team: TeamId; stage: EggStage; position: [number, number, number] }) {
   const ref = useRef<THREE.Group>(null)
   const src = `/models/egg-${team}.glb`
   const hasModel = useModel(src)
@@ -79,7 +70,11 @@ export function Egg3D({ team, stage, color, position }: { team: TeamId; stage: E
     g.rotation.z = stage >= 1 ? Math.sin(t * (2 + stage)) * 0.04 * stage : 0
     g.scale.set(size * (1 + Math.sin(t * 2) * 0.012), size * (1 - Math.sin(t * 2) * 0.012), size)
   })
-  const shape = <ShapeEgg color={color} />
+  const shape = (
+    <Suspense fallback={null}>
+      <SpriteEgg team={team} stage={stage} />
+    </Suspense>
+  )
   return (
     <group ref={ref} position={position}>
       {hasModel ? (
