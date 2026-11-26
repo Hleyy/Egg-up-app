@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { ArScreen } from './screens/ArScreen'
 import { BagScreen } from './screens/BagScreen'
 import { BoardScreen } from './screens/BoardScreen'
 import { EndScreen } from './screens/EndScreen'
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/rules" element={<RulesScreen />} />
         <Route path="/end" element={<EndScreen />} />
         <Route path="/share" element={<ShareScreen />} />
+        <Route path="/ar" element={<ArScreen />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

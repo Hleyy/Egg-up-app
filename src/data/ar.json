@@ -1,0 +1,105 @@
+{
+  "id": "clean-street",
+  "target": "/ar/targets/clean-street.mind",
+  "seconds": 60,
+  "penalty": 10,
+  "hintAfter": 25,
+  "bin": { "model": "/ar/models/bin.glb", "x": 0.31, "z": -0.07, "turn": -0.35, "scale": 0.85 },
+  "items": [
+    {
+      "id": "bottle",
+      "model": "/ar/models/bottle.glb",
+      "recyclable": true,
+      "word": "a plastic bottle",
+      "choices": ["a plastic bottle", "a plastic bowl", "a glass bottle"],
+      "x": 0.06,
+      "z": 0.19,
+      "turn": 0.9,
+      "scale": 1,
+      "lying": 0.032
+    },
+    {
+      "id": "can",
+      "model": "/ar/models/can.glb",
+      "recyclable": true,
+      "word": "a can",
+      "choices": ["a cup", "a can", "a cap"],
+      "x": 0.37,
+      "z": -0.27,
+      "turn": 0.4,
+      "scale": 1
+    },
+    {
+      "id": "jar",
+      "model": "/ar/models/jar.glb",
+      "recyclable": true,
+      "word": "a glass jar",
+      "choices": ["a glass jam", "a jug", "a glass jar"],
+      "x": -0.2,
+      "z": -0.12,
+      "turn": 0.3,
+      "scale": 0.9
+    },
+    {
+      "id": "newspaper",
+      "model": "/ar/models/newspaper.glb",
+      "recyclable": true,
+      "word": "a newspaper",
+      "choices": ["a notebook", "a newspaper", "a napkin"],
+      "x": -0.32,
+      "z": 0.17,
+      "turn": -0.5,
+      "scale": 0.9
+    },
+    {
+      "id": "box",
+      "model": "/ar/models/box.glb",
+      "recyclable": true,
+      "word": "a cardboard box",
+      "choices": ["a cardboard box", "a cupboard", "a card game"],
+      "x": -0.2,
+      "z": -0.12,
+      "turn": 0.4,
+      "scale": 1
+    },
+    {
+      "id": "banana",
+      "model": "/ar/models/banana.glb",
+      "recyclable": false,
+      "word": "a banana peel",
+      "choices": ["a banana pill", "a banana peel", "a pineapple"],
+      "x": -0.1,
+      "z": 0.25,
+      "turn": 0.2,
+      "scale": 1.1,
+      "fact": { "en": "A banana peel is food waste. It goes in the compost!", "fr": "Une peau de banane, c'est un déchet alimentaire. Elle va au compost !" }
+    },
+    {
+      "id": "apple",
+      "model": "/ar/models/apple.glb",
+      "recyclable": false,
+      "word": "an apple core",
+      "choices": ["an apple pie", "an apple corn", "an apple core"],
+      "x": 0.17,
+      "z": 0.28,
+      "turn": -0.6,
+      "scale": 1.1,
+      "fact": { "en": "An apple core is food waste. It goes in the compost!", "fr": "Un trognon de pomme, c'est un déchet alimentaire. Il va au compost !" }
+    },
+    {
+      "id": "battery",
+      "model": "/ar/models/battery.glb",
+      "recyclable": false,
+      "word": "a battery",
+      "choices": ["a battery", "a bakery", "a button"],
+      "x": -0.4,
+      "z": -0.27,
+      "turn": 0.7,
+      "scale": 1.8,
+      "fact": {
+        "en": "Never put a battery in the bin! Take it to a shop collection box.",
+        "fr": "Jamais de pile dans la poubelle ! Rapporte-la dans un bac de collecte en magasin."
+      }
+    }
+  ]
+}

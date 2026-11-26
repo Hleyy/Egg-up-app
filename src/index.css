@@ -750,6 +750,29 @@ button {
 .shake-x {
   animation: shake-x 0.45s ease-in-out 0.25s;
 }
+.ar-scan {
+  border-radius: 5px;
+  background:
+    linear-gradient(#58cc02, #58cc02) top left / 7px 2.5px,
+    linear-gradient(#58cc02, #58cc02) top left / 2.5px 7px,
+    linear-gradient(#58cc02, #58cc02) top right / 7px 2.5px,
+    linear-gradient(#58cc02, #58cc02) top right / 2.5px 7px,
+    linear-gradient(#58cc02, #58cc02) bottom left / 7px 2.5px,
+    linear-gradient(#58cc02, #58cc02) bottom left / 2.5px 7px,
+    linear-gradient(#58cc02, #58cc02) bottom right / 7px 2.5px,
+    linear-gradient(#58cc02, #58cc02) bottom right / 2.5px 7px;
+  background-repeat: no-repeat;
+  animation: ar-pulse 1.2s ease-in-out infinite;
+}
+@keyframes ar-pulse {
+  0%,
+  100% {
+    transform: scale(0.82);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
 
 @media (hover: hover) {
   .btn {
