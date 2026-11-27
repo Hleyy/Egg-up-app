@@ -104,6 +104,7 @@ export const en = {
     groupAlone: 'One student, answer alone!',
     groupTogether: '{team}, the whole group!',
     showAnswer: 'Show the answer to the reader',
+    replay: 'Listen again',
     answer: 'Answer',
     wasRight: 'Was the answer right?',
     right: 'Right',

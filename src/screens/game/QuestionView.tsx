@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animal } from '../../components/animals/Animal'
 import { useTalk } from '../../components/animals/useTalk'
-import { CheckIcon, ClockIcon, CloseIcon, StarIcon } from '../../components/icons'
+import { CheckIcon, ClockIcon, CloseIcon, ReplayIcon, StarIcon } from '../../components/icons'
 import { Burst } from '../../components/Burst'
 import { Avatar, Btn, PauseButton, Pill, Sheet, TopBar } from '../../components/ui'
 import { findCard } from '../../data/cards'
@@ -65,6 +65,7 @@ function SeasonWindow({
   speech,
   cue,
   cueKey,
+  replay,
 }: {
   season: Season
   host: AnimalId
@@ -72,7 +73,9 @@ function SeasonWindow({
   speech: ReturnType<typeof useTalk>
   cue: 'ask' | 'correct' | 'wrong'
   cueKey: string
+  replay?: () => void
 }) {
+  const { t } = useSettings()
   return (
     <div className="relative mt-4 aspect-[358/250] w-full overflow-hidden rounded-[24px] shadow-[inset_0_0_0_2px_rgba(255,255,255,.7),0_4px_0_#e5e5e5]">
       <div className="absolute inset-0 scale-110 bg-cover bg-[center_65%]" style={{ backgroundImage: `url(/decors/${season}.webp)` }} />
@@ -83,6 +86,16 @@ function SeasonWindow({
           <path d="M14 1 L2 11 L14 21Z" fill="#fff" />
           <path d="M13 1 L2 11 L13 21" fill="none" stroke="#e5e5e5" strokeWidth="2" strokeLinejoin="round" />
         </svg>
+        {replay && (
+          <button
+            type="button"
+            aria-label={t('question.replay')}
+            onClick={replay}
+            className="text-blue absolute -right-1 -bottom-5 flex size-10 items-center justify-center rounded-full bg-white shadow-[inset_0_0_0_2px_#e5e5e5,0_3px_0_#e5e5e5] active:translate-y-0.5 active:shadow-none"
+          >
+            <ReplayIcon className="size-5" />
+          </button>
+        )}
       </div>
     </div>
   )
@@ -157,7 +170,15 @@ export function QuestionView() {
         )}
       </div>
 
-      <SeasonWindow season={season} host={animalOf(card.id) ?? player.animal} card={card} speech={speech} cue={cue} cueKey={`${cardId}-${phase.kind}`} />
+      <SeasonWindow
+        season={season}
+        host={animalOf(card.id) ?? player.animal}
+        card={card}
+        speech={speech}
+        cue={cue}
+        cueKey={`${cardId}-${phase.kind}`}
+        replay={feedback || !src ? undefined : () => say(text, src)}
+      />
 
       {card.choices && (
         <ol className="mt-3 grid gap-2">

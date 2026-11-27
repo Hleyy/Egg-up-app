@@ -106,6 +106,7 @@ export const fr: Messages = {
     groupAlone: 'Un élève répond seul !',
     groupTogether: '{team}, tout le groupe !',
     showAnswer: 'Montrer la réponse au lecteur',
+    replay: 'Réécouter',
     answer: 'Réponse',
     wasRight: 'La réponse était-elle juste ?',
     right: 'Juste',
