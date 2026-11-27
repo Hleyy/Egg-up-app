@@ -30,9 +30,20 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2,otf,wasm,riv,mp3,glb}'],
-        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+        globPatterns: ['**/*.{js,css,html,png,svg,webp,woff2,otf,mp3}'],
         navigateFallback: '/index.html',
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.endsWith('.wasm'),
+            handler: 'CacheFirst',
+            options: { cacheName: 'wasm', expiration: { maxEntries: 4 } },
+          },
+          {
+            urlPattern: ({ url }) => /\.(riv|glb)$/.test(url.pathname),
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'models', cacheableResponse: { statuses: [200] }, expiration: { maxEntries: 30 } },
+          },
+        ],
       },
     }),
   ],
