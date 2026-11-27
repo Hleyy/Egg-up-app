@@ -221,7 +221,7 @@ export default function Board3D({ pawns, eggs, focus, onArrive, className = '' }
       <Canvas
         key={portrait ? 'p' : 'l'}
         shadows
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         camera={{ position: [0, 8.6, 6.4], fov: 36 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
