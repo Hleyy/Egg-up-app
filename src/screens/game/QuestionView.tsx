@@ -12,6 +12,7 @@ import { SEASON_COLOR, TEAM_COLOR } from '../../theme/colors'
 import { formatClock } from '../../lib/format'
 import { useGame } from '../../game/useGame'
 import { useSettings } from '../../settings/useSettings'
+import { animalOf } from '../../game/voices'
 
 const CATEGORY_COLOR: Record<Category, [string, string]> = {
   learn: ['#58CC02', '#58A700'],
@@ -156,7 +157,7 @@ export function QuestionView() {
         )}
       </div>
 
-      <SeasonWindow season={season} host={player.animal} card={card} speech={speech} cue={cue} cueKey={`${cardId}-${phase.kind}`} />
+      <SeasonWindow season={season} host={animalOf(card.id) ?? player.animal} card={card} speech={speech} cue={cue} cueKey={`${cardId}-${phase.kind}`} />
 
       {card.choices && (
         <ol className="mt-3 grid gap-2">
