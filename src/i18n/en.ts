@@ -220,6 +220,7 @@ export const en = {
     language: 'Language',
     languageDetail: 'Cards stay in English',
     sound: 'Sound',
+    voice: 'Animal voices',
     vibration: 'Vibration',
     answerTimer: 'Answer timer',
     answerTimerDetail: '30 seconds per question',

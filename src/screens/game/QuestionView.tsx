@@ -90,7 +90,7 @@ function SeasonWindow({
 export function QuestionView() {
   const turn = useTurn()!
   const { game, player, season } = turn
-  const { t, settings, buzz, play } = useSettings()
+  const { t, settings, buzz, play, voice } = useSettings()
   const { answer, challenge, next } = useGame()
   const labels = useLabels()
   const speech = useTalk()
@@ -100,12 +100,13 @@ export function QuestionView() {
   const card = findCard(cardId)
   const say = speech.say
   const text = card?.text.en ?? ''
+  const src = cardId ? voice(cardId) : undefined
 
   useEffect(() => {
     if (phase.kind !== 'question' || !text) return
-    const id = window.setTimeout(() => say(text), 450)
+    const id = window.setTimeout(() => say(text, src), 450)
     return () => window.clearTimeout(id)
-  }, [cardId, text, say, phase.kind])
+  }, [cardId, text, src, say, phase.kind])
 
   if (!card || (phase.kind !== 'question' && phase.kind !== 'feedback')) return null
   const isChallenge = card.category === 'challenge'

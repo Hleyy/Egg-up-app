@@ -41,7 +41,7 @@ function Stat({ label, value, suffix = '', c, d, delay }: { label: string; value
 
 export function EndScreen() {
   const { game, clearGame, elapsed } = useGame()
-  const { t, play } = useSettings()
+  const { t, play, voice } = useSettings()
   const labels = useLabels()
   const navigate = useNavigate()
   const speech = useTalk()
@@ -60,9 +60,9 @@ export function EndScreen() {
   }, [winner, play])
   useEffect(() => {
     if (!winner) return
-    const id = window.setTimeout(() => say(`It's ${en.creature[creature]}, ${en.creatureAbout[creature]}!`), 600)
+    const id = window.setTimeout(() => say(`It's ${en.creature[creature]}, ${en.creatureAbout[creature]}!`, voice(`hatch-${creature}`)), 600)
     return () => window.clearTimeout(id)
-  }, [winner, say, creature])
+  }, [winner, say, creature, voice])
 
   if (!game || game.status !== 'finished') return <Navigate to="/" replace />
 

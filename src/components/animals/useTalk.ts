@@ -35,36 +35,65 @@ export function useTalk() {
   const [talking, setTalking] = useState(false)
   const [viseme, setViseme] = useState(0)
   const timer = useRef<number | null>(null)
-  const pos = useRef(0)
-  const text = useRef('')
+  const audio = useRef<HTMLAudioElement | null>(null)
 
   const stopTimer = () => {
     if (timer.current !== null) window.clearInterval(timer.current)
     timer.current = null
   }
 
+  const stopAudio = () => {
+    const current = audio.current
+    audio.current = null
+    if (!current) return
+    current.onloadedmetadata = current.onended = current.onerror = null
+    current.pause()
+  }
+
   const stop = useCallback(() => {
     stopTimer()
+    stopAudio()
     setTalking(false)
     setViseme(0)
   }, [])
 
-  const say = useCallback(
-    (value: string) => {
+  const animate = useCallback(
+    (value: string, step: number, until: number) => {
       stopTimer()
-      text.current = value
-      pos.current = 0
-      setTalking(true)
-      const until = Math.min(6000, value.length * CHAR_MS)
+      let pos = 0
       const started = performance.now()
       timer.current = window.setInterval(() => {
-        const ch = text.current[pos.current]?.toLowerCase() ?? ''
-        pos.current += 1
+        const ch = value[pos]?.toLowerCase() ?? ''
+        pos += 1
         setViseme(ch in LETTER_VISEME ? LETTER_VISEME[ch] : 0)
-        if (pos.current >= text.current.length || performance.now() - started > until) stop()
-      }, CHAR_MS)
+        if (performance.now() - started > until || (!audio.current && pos >= value.length)) stop()
+      }, step)
     },
     [stop],
+  )
+
+  const say = useCallback(
+    (value: string, src?: string) => {
+      stop()
+      setTalking(true)
+      const mimic = () => animate(value, CHAR_MS, Math.min(6000, value.length * CHAR_MS))
+      if (!src) return mimic()
+      const voice = new Audio(src)
+      audio.current = voice
+      const fail = () => {
+        if (audio.current !== voice) return
+        stopAudio()
+        mimic()
+      }
+      voice.onloadedmetadata = () => {
+        const ms = voice.duration * 1000
+        if (Number.isFinite(ms)) animate(value, Math.max(40, ms / Math.max(1, value.length)), ms + 400)
+      }
+      voice.onended = () => audio.current === voice && stop()
+      voice.onerror = fail
+      void voice.play().catch(fail)
+    },
+    [animate, stop],
   )
 
   useEffect(() => stop, [stop])

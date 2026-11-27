@@ -222,6 +222,7 @@ export const fr: Messages = {
     language: 'Langue',
     languageDetail: 'Les cartes restent en anglais',
     sound: 'Son',
+    voice: 'Voix des animaux',
     vibration: 'Vibration',
     answerTimer: 'Minuteur de réponse',
     answerTimerDetail: '30 secondes par question',
