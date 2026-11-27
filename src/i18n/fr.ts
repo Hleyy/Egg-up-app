@@ -107,6 +107,7 @@ export const fr: Messages = {
     groupTogether: '{team}, tout le groupe !',
     showAnswer: 'Montrer la réponse au lecteur',
     replay: 'Réécouter',
+    slow: 'Réécouter lentement',
     answer: 'Réponse',
     wasRight: 'La réponse était-elle juste ?',
     right: 'Juste',

@@ -105,6 +105,7 @@ export const en = {
     groupTogether: '{team}, the whole group!',
     showAnswer: 'Show the answer to the reader',
     replay: 'Listen again',
+    slow: 'Listen slowly',
     answer: 'Answer',
     wasRight: 'Was the answer right?',
     right: 'Right',

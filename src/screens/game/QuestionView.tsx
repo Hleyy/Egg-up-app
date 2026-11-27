@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animal } from '../../components/animals/Animal'
 import { useTalk } from '../../components/animals/useTalk'
-import { CheckIcon, ClockIcon, CloseIcon, ReplayIcon, StarIcon } from '../../components/icons'
+import { CheckIcon, ClockIcon, CloseIcon, ReplayIcon, SlowIcon, StarIcon } from '../../components/icons'
 import { Burst } from '../../components/Burst'
 import { Avatar, Btn, PauseButton, Pill, Sheet, TopBar } from '../../components/ui'
 import { findCard } from '../../data/cards'
@@ -13,6 +13,8 @@ import { formatClock } from '../../lib/format'
 import { useGame } from '../../game/useGame'
 import { useSettings } from '../../settings/useSettings'
 import { animalOf } from '../../game/voices'
+
+const SLOW_RATE = 0.75
 
 const CATEGORY_COLOR: Record<Category, [string, string]> = {
   learn: ['#58CC02', '#58A700'],
@@ -73,7 +75,7 @@ function SeasonWindow({
   speech: ReturnType<typeof useTalk>
   cue: 'ask' | 'correct' | 'wrong'
   cueKey: string
-  replay?: () => void
+  replay?: (rate?: number) => void
 }) {
   const { t } = useSettings()
   return (
@@ -87,14 +89,24 @@ function SeasonWindow({
           <path d="M13 1 L2 11 L13 21" fill="none" stroke="#e5e5e5" strokeWidth="2" strokeLinejoin="round" />
         </svg>
         {replay && (
-          <button
-            type="button"
-            aria-label={t('question.replay')}
-            onClick={replay}
-            className="text-blue absolute -right-1 -bottom-5 flex size-10 items-center justify-center rounded-full bg-white shadow-[inset_0_0_0_2px_#e5e5e5,0_3px_0_#e5e5e5] active:translate-y-0.5 active:shadow-none"
-          >
-            <ReplayIcon className="size-5" />
-          </button>
+          <div className="absolute -right-1 -bottom-5 flex gap-1.5">
+            <button
+              type="button"
+              aria-label={t('question.slow')}
+              onClick={() => replay(SLOW_RATE)}
+              className="text-blue flex size-10 items-center justify-center rounded-full bg-white shadow-[inset_0_0_0_2px_#e5e5e5,0_3px_0_#e5e5e5] active:translate-y-0.5 active:shadow-none"
+            >
+              <SlowIcon className="size-6" />
+            </button>
+            <button
+              type="button"
+              aria-label={t('question.replay')}
+              onClick={() => replay()}
+              className="text-blue flex size-10 items-center justify-center rounded-full bg-white shadow-[inset_0_0_0_2px_#e5e5e5,0_3px_0_#e5e5e5] active:translate-y-0.5 active:shadow-none"
+            >
+              <ReplayIcon className="size-5" />
+            </button>
+          </div>
         )}
       </div>
     </div>
@@ -177,7 +189,7 @@ export function QuestionView() {
         speech={speech}
         cue={cue}
         cueKey={`${cardId}-${phase.kind}`}
-        replay={feedback || !src ? undefined : () => say(text, src)}
+        replay={feedback || !src ? undefined : (rate) => say(text, src, rate)}
       />
 
       {card.choices && (

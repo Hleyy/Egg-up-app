@@ -73,12 +73,13 @@ export function useTalk() {
   )
 
   const say = useCallback(
-    (value: string, src?: string) => {
+    (value: string, src?: string, rate = 1) => {
       stop()
       setTalking(true)
       const mimic = () => animate(value, CHAR_MS, Math.min(6000, value.length * CHAR_MS))
       if (!src) return mimic()
       const voice = new Audio(src)
+      voice.playbackRate = rate
       audio.current = voice
       const fail = () => {
         if (audio.current !== voice) return
@@ -86,7 +87,7 @@ export function useTalk() {
         mimic()
       }
       voice.onloadedmetadata = () => {
-        const ms = voice.duration * 1000
+        const ms = (voice.duration * 1000) / rate
         if (Number.isFinite(ms)) animate(value, Math.max(40, ms / Math.max(1, value.length)), ms + 400)
       }
       voice.onended = () => audio.current === voice && stop()
