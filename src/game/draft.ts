@@ -16,7 +16,14 @@ export function loadDraft(defaults: Draft): Draft {
     const valid = (m: Mode) =>
       TEAM_IDS.every((t) => {
         const team = d?.teams?.[m]?.[t]
-        return team && Array.isArray(team.players) && Array.isArray(team.animals) && team.animals.every((a) => ANIMALS.includes(a))
+        return (
+          team &&
+          typeof team.name === 'string' &&
+          Array.isArray(team.players) &&
+          team.players.every((p) => typeof p === 'string') &&
+          Array.isArray(team.animals) &&
+          team.animals.every((a) => ANIMALS.includes(a))
+        )
       })
     return (d?.mode === 'teams' || d?.mode === 'class') && valid('teams') && valid('class') ? d : defaults
   } catch {

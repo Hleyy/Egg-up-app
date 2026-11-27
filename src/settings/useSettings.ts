@@ -50,10 +50,17 @@ export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY)
     if (!raw) return DEFAULT_SETTINGS
-    const s = { ...DEFAULT_SETTINGS, ...(JSON.parse(raw) as Partial<Settings>) }
-    if (s.language !== 'en' && s.language !== 'fr') s.language = 'en'
-    s.timerMinutes = Math.min(MAX_TIMER_MINUTES, Math.max(MIN_TIMER_MINUTES, Number(s.timerMinutes) || DEFAULT_TIMER_MINUTES))
-    return s
+    const saved = JSON.parse(raw) as Partial<Record<keyof Settings, unknown>> | null
+    const flag = (key: Exclude<keyof Settings, 'language' | 'timerMinutes'>) => (typeof saved?.[key] === 'boolean' ? saved[key] : DEFAULT_SETTINGS[key])
+    return {
+      language: saved?.language === 'fr' ? 'fr' : 'en',
+      sound: flag('sound'),
+      vibration: flag('vibration'),
+      answerTimer: flag('answerTimer'),
+      keepAwake: flag('keepAwake'),
+      gameTimer: flag('gameTimer'),
+      timerMinutes: Math.min(MAX_TIMER_MINUTES, Math.max(MIN_TIMER_MINUTES, Number(saved?.timerMinutes) || DEFAULT_TIMER_MINUTES)),
+    }
   } catch {
     return DEFAULT_SETTINGS
   }
