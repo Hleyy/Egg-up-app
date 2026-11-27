@@ -1,43 +1,25 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { createGame, gameReducer, remainingMs, type GameAction } from './reducer'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { gameReducer, type GameAction } from './reducer'
+import { elapsedMs, remainingMs } from './selectors'
+import { createGame } from './setup'
 import { loadGame, saveGame } from './storage'
 import { addRecord, loadHistory, saveHistory, toRecord, type GameRecord } from './history'
-import { rollDie } from './rules'
-import type { CardEffect, GameSetup, GameState, MalusEffect, TeamId } from './types'
+import { rollDice } from './rules'
+import type { GameState } from './types'
+import { useSettings } from '../settings/useSettings'
+import { GameContext, type GameApi, type GameCommand } from './useGame'
 
 const UNDO_LIMIT = 20
-
-type Payload<A> = A extends { now: number } ? Omit<A, 'now'> : never
-export type GameCommand = Payload<GameAction>
 
 interface Store {
   game: GameState | null
   history: GameState[]
 }
 
-interface GameApi {
-  game: GameState | null
-  remaining: number
-  canUndo: boolean
-  records: GameRecord[]
-  clearRecords: () => void
-  newGame: (setup: GameSetup) => void
-  clearGame: () => void
-  undo: () => void
-  dispatch: (command: GameCommand) => void
-  roll: () => number | null
-  answer: (correct: boolean, bonus?: CardEffect | null) => void
-  endTurn: () => void
-  setTurn: (team: TeamId) => void
-  move: (team: TeamId, delta: number) => void
-  adjustScore: (team: TeamId, delta: number) => void
-  playMalus: (by: TeamId, cardId?: string | null, effect?: MalusEffect | null) => void
-  pause: () => void
-  resume: () => void
-  abandon: () => void
+function withPlayerNames(game: GameState | null, fallback: (n: number) => string): GameState | null {
+  if (!game || game.players.every((p) => p.name)) return game
+  return { ...game, players: game.players.map((p) => (p.name ? p : { ...p, name: fallback(Number(p.id.split('-')[1]) || 1) })) }
 }
-
-const GameContext = createContext<GameApi | null>(null)
 
 const NOT_UNDOABLE = new Set<GameAction['type']>(['tick', 'pause', 'resume'])
 
@@ -48,9 +30,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   })
   const [now, setNow] = useState(() => Date.now())
 
-  const game = store.game
+  const { t } = useSettings()
+  const game = useMemo(() => withPlayerNames(store.game, (n) => t('setup.player', { n })), [store.game, t])
 
-  useEffect(() => saveGame(game), [game])
+  useEffect(() => saveGame(store.game), [store.game])
 
   const [records, setRecords] = useState<GameRecord[]>(loadHistory)
   const finishedRecord = game ? toRecord(game) : null
@@ -90,10 +73,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [dispatch])
 
   const api = useMemo<GameApi>(() => {
-    const remaining = game ? remainingMs(game.timer, now) : 0
     return {
       game,
-      remaining,
+      now,
+      remaining: game ? remainingMs(game.timer, now) : null,
+      elapsed: game ? elapsedMs(game.timer, now) : 0,
       canUndo: store.history.length > 0 && game?.status !== 'finished',
       records,
       clearRecords: () => setRecords([]),
@@ -107,17 +91,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
         }),
       dispatch,
       roll: () => {
-        if (!game || game.status !== 'playing' || game.turn.roll !== null) return null
-        const value = rollDie()
-        dispatch({ type: 'roll', value })
-        return value
+        if (!game || game.status !== 'playing' || game.phase.kind !== 'roll') return null
+        const dice = rollDice()
+        dispatch({ type: 'roll', dice })
+        return dice
       },
-      answer: (correct, bonus) => dispatch({ type: 'answer', correct, bonus }),
-      endTurn: () => dispatch({ type: 'endTurn' }),
-      setTurn: (team) => dispatch({ type: 'setTurn', team }),
-      move: (team, delta) => dispatch({ type: 'move', team, delta }),
+      land: () => dispatch({ type: 'land', random: Math.random() }),
+      answer: (correct) => dispatch({ type: 'answer', correct }),
+      challenge: (winner) => dispatch({ type: 'challenge', winner }),
+      bonus: (keep) => dispatch({ type: 'bonus', keep }),
+      malus: (shield) => dispatch({ type: 'malus', shield }),
+      useKept: (team, cardId) => dispatch({ type: 'useKept', team, cardId }),
+      next: () => dispatch({ type: 'continue' }),
+      hatch: () => dispatch({ type: 'hatch' }),
       adjustScore: (team, delta) => dispatch({ type: 'adjustScore', team, delta }),
-      playMalus: (by, cardId, effect) => dispatch({ type: 'playMalus', by, cardId, effect }),
+      movePawn: (pawn, delta) => dispatch({ type: 'movePawn', pawn, delta }),
+      fixMove: (delta) => dispatch({ type: 'fixMove', delta }),
       pause: () => dispatch({ type: 'pause' }),
       resume: () => dispatch({ type: 'resume' }),
       abandon: () => dispatch({ type: 'abandon' }),
@@ -125,10 +114,4 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [game, now, store.history.length, dispatch, records])
 
   return <GameContext.Provider value={api}>{children}</GameContext.Provider>
-}
-
-export function useGame(): GameApi {
-  const ctx = useContext(GameContext)
-  if (!ctx) throw new Error('useGame must be used inside <GameProvider>')
-  return ctx
 }

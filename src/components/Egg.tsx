@@ -1,20 +1,54 @@
+import { useId } from 'react'
 import type { EggStage, TeamId } from '../game/types'
-import { useSettings } from '../settings/SettingsProvider'
 
-const STAGE_INDEX: Record<EggStage, number> = { egg: 1, wobble: 2, crack: 3, peek: 4, hatched: 5 }
+export type EggMood = 'idle' | 'hop' | 'sad' | 'shiver' | 'wobble'
 
-export function Egg({ stage, team, size = 56 }: { stage: EggStage; team: TeamId; size?: number }) {
-  const { t } = useSettings()
+const MOOD_CLASS: Record<EggMood, string> = {
+  idle: 'anim-breathe',
+  hop: 'anim-hop',
+  sad: 'anim-sad',
+  shiver: 'anim-shiver',
+  wobble: 'anim-wobble',
+}
+
+export function EggInNest({
+  team,
+  stage,
+  mood = 'idle',
+  moodKey,
+  className = '',
+  label,
+}: {
+  team: TeamId
+  stage: EggStage
+  mood?: EggMood
+  moodKey?: string | number
+  className?: string
+  label?: string
+}) {
+  const id = useId().replace(/:/g, '')
+  const effective = mood === 'idle' && stage === 1 ? 'wobble' : mood
   return (
-    <div className="flex flex-col items-center gap-1" data-stage={stage} data-team={team}>
-      <div
-        className={`flex items-center justify-center rounded-[50%/60%_60%_40%_40%] border-2 border-dashed font-bold ${team === 'red' ? 'border-team-red' : 'border-team-blue'}`}
-        style={{ width: size, height: size * 1.25 }}
-        aria-label={t(`egg.${stage}`)}
-      >
-        {STAGE_INDEX[stage]}/5
-      </div>
-      <span className="text-xs text-ink-muted">{t(`egg.${stage}`)}</span>
-    </div>
+    <svg
+      viewBox="0 0 320 300"
+      className={`block overflow-visible ${className}`}
+      role={label ? 'img' : undefined}
+      aria-label={label}
+      aria-hidden={label ? undefined : true}
+    >
+      <defs>
+        <clipPath id={`front${id}`}>
+          <path d="M10 112 L88 146 Q160 206 234 146 L310 112 L310 300 L10 300Z" />
+        </clipPath>
+      </defs>
+      <ellipse cx="160" cy="236" rx="118" ry="12" fill="#3C3A45" opacity=".08" />
+      <image href="/img/nest.webp" x="0" y="-10" width="320" height="320" />
+      <g transform="translate(100 18) scale(1)">
+        <g key={moodKey} className={MOOD_CLASS[effective]} style={{ transformBox: 'fill-box' }}>
+          <image href={`/eggs/${team}-${stage}.svg`} x="-10" y="-9" width="140" height="174" />
+        </g>
+      </g>
+      <image href="/img/nest.webp" x="0" y="-10" width="320" height="320" clipPath={`url(#front${id})`} />
+    </svg>
   )
 }

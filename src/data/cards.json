@@ -1,88 +1,1711 @@
 {
-  "version": 1,
+  "version": 2,
   "cards": [
     {
-      "id": "learn-001",
-      "type": "learn",
-      "season": "summer",
-      "question": {
-        "en": "What does 'Green IT' mean?",
-        "fr": "Que veut dire « Green IT » ?"
+      "id": "q-1",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What percentage of the water on Earth is fresh water?",
+        "fr": "Quel pourcentage de l'eau sur Terre est de l'eau douce ?"
+      },
+      "choices": {
+        "en": ["3%", "25%", "50%"],
+        "fr": ["3 %", "25 %", "50 %"]
       },
       "answer": {
-        "en": "Using digital technology in a way that is better for the planet.",
-        "fr": "Utiliser le numérique d'une façon plus respectueuse de la planète."
+        "en": "A. 3%",
+        "fr": "A. 3 %"
+      },
+      "funFact": {
+        "en": "Most fresh water is frozen in ice and glaciers.",
+        "fr": "La plupart de l'eau douce est gelée dans les glaces et les glaciers."
       }
     },
     {
-      "id": "understand-001",
-      "type": "understand",
-      "season": "autumn",
-      "question": {
-        "en": "Why does streaming a video use energy?",
-        "fr": "Pourquoi regarder une vidéo en streaming consomme-t-il de l'énergie ?"
+      "id": "q-2",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What do we call it when lots of trees in a forest disappear?",
+        "fr": "Comment appelle-t-on la disparition massive des arbres dans une forêt ?"
       },
       "answer": {
-        "en": "Data centres and networks need electricity to send the video.",
-        "fr": "Les data centers et les réseaux ont besoin d'électricité pour envoyer la vidéo."
+        "en": "Deforestation.",
+        "fr": "La déforestation."
       }
     },
     {
-      "id": "apply-001",
-      "type": "apply",
-      "season": "winter",
-      "question": {
-        "en": "Name one way to make your phone last longer.",
-        "fr": "Cite une façon de faire durer ton téléphone plus longtemps."
+      "id": "q-3",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "True or false: when glaciers on land melt, the sea level goes up.",
+        "fr": "Vrai ou faux : la fonte des glaciers terrestres contribue à la montée du niveau des océans."
       },
       "answer": {
-        "en": "Use a case, repair it, or don't change it every year.",
-        "fr": "Mettre une coque, le réparer, ou ne pas le changer chaque année."
+        "en": "True.",
+        "fr": "Vrai."
       }
     },
     {
-      "id": "malus-001",
-      "type": "malus",
-      "question": {
-        "en": "Power cut! The other team loses 2 points.",
-        "fr": "Coupure de courant ! L'autre équipe perd 2 points."
+      "id": "q-4",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "True or false: noise from boats can stop whales from talking to each other.",
+        "fr": "Vrai ou faux : le bruit des bateaux peut perturber la communication des baleines."
       },
       "answer": {
-        "en": "",
-        "fr": ""
+        "en": "True.",
+        "fr": "Vrai."
+      }
+    },
+    {
+      "id": "q-5",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why should you not leave a charger plugged in for nothing?",
+        "fr": "Pourquoi faut-il éviter de laisser un chargeur branché inutilement ?"
+      },
+      "choices": {
+        "en": ["It can still use a little electricity.", "It puts CO₂ into the room.", "It uses the energy stored in the phone.", "It makes the house hotter."],
+        "fr": [
+          "Il peut continuer à consommer un peu d'électricité.",
+          "Il libère du CO₂ directement dans la pièce.",
+          "Il utilise l'énergie stockée dans le téléphone.",
+          "Il augmente la température du logement."
+        ]
+      },
+      "answer": {
+        "en": "A. It can still use a little electricity.",
+        "fr": "A. Il peut continuer à consommer un peu d'électricité."
+      },
+      "funFact": {
+        "en": "A charger can use a little electricity even with no phone on it. It is not much, but it is easy to stop.",
+        "fr": "Il peut consommer un peu d'électricité même sans téléphone branché. C'est faible, mais facile à éviter."
+      }
+    },
+    {
+      "id": "q-6",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "Which insect is very important for pollinating lots of plants?",
+        "fr": "Quel insecte joue un rôle essentiel dans la pollinisation de nombreuses plantes ?"
+      },
+      "choices": {
+        "en": ["The ladybird", "The bee", "The ant", "The cricket"],
+        "fr": ["La coccinelle", "L'abeille", "La fourmi", "Le grillon"]
+      },
+      "answer": {
+        "en": "B. The bee.",
+        "fr": "B. L'abeille."
+      },
+      "funFact": {
+        "en": "Bees carry pollen from flower to flower. This helps plants make fruit and seeds.",
+        "fr": "L'abeille transporte le pollen d'une fleur à l'autre. Cela permet aux plantes de produire des fruits et des graines."
+      }
+    },
+    {
+      "id": "q-7",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "Find the odd one out: bee, ant, spider, ladybird.",
+        "fr": "Trouve l'intrus : abeille, fourmi, araignée, coccinelle."
+      },
+      "answer": {
+        "en": "The spider, because it is not an insect.",
+        "fr": "L'araignée, car ce n'est pas un insecte."
+      }
+    },
+    {
+      "id": "q-8",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why does artificial intelligence need a lot of computer power?",
+        "fr": "Pourquoi l'intelligence artificielle a-t-elle besoin de beaucoup de ressources informatiques ?"
+      },
+      "choices": {
+        "en": [
+          "It works with calculations made by computers.",
+          "It uses animals to learn.",
+          "It turns oil directly into electricity.",
+          "It only works with the internet."
+        ],
+        "fr": [
+          "Elle fonctionne grâce à des calculs réalisés par des ordinateurs.",
+          "Elle utilise des animaux pour apprendre.",
+          "Elle transforme directement le pétrole en électricité.",
+          "Elle fonctionne uniquement grâce à Internet."
+        ]
+      },
+      "answer": {
+        "en": "A. It works with calculations made by computers.",
+        "fr": "A. Elle fonctionne grâce à des calculs réalisés par des ordinateurs."
+      },
+      "funFact": {
+        "en": "AI does a huge number of calculations on powerful computers. These computers use electricity and need a lot of equipment.",
+        "fr": "L'IA réalise énormément de calculs sur des ordinateurs puissants. Ils consomment de l'électricité et demandent beaucoup d'équipements."
+      }
+    },
+    {
+      "id": "q-9",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "I am invisible, I am in the air and humans need me to breathe. Who am I?",
+        "fr": "Je suis invisible, je suis présent dans l'air et les êtres humains ont besoin de moi pour respirer. Qui suis-je ?"
+      },
+      "answer": {
+        "en": "Oxygen.",
+        "fr": "L'oxygène."
+      }
+    },
+    {
+      "id": "q-10",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "I am an insect, I have six legs and I can carry many times my own weight. Who am I?",
+        "fr": "Je suis un insecte, je possède six pattes et je peux porter plusieurs fois mon poids. Qui suis-je ?"
+      },
+      "answer": {
+        "en": "An ant.",
+        "fr": "Une fourmi."
+      }
+    },
+    {
+      "id": "q-11",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "How many eyes does a bee have: 2, 5 or 8?",
+        "fr": "Combien d'yeux possède une abeille : 2, 5 ou 8 ?"
+      },
+      "answer": {
+        "en": "5 eyes.",
+        "fr": "5 yeux."
+      },
+      "funFact": {
+        "en": "A bee has two big compound eyes and three small simple eyes.",
+        "fr": "Elle possède deux grands yeux composés et trois petits yeux simples."
+      }
+    },
+    {
+      "id": "q-12",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "What happens to plastic waste left in nature?",
+        "fr": "Que deviennent les déchets plastiques abandonnés dans la nature ?"
+      },
+      "choices": {
+        "en": ["It disappears in a few days.", "It always turns into fertiliser.", "It breaks into tiny pieces called microplastics.", "Trees absorb it."],
+        "fr": [
+          "Ils disparaissent naturellement en quelques jours.",
+          "Ils se transforment toujours en engrais.",
+          "Ils se fragmentent en très petits morceaux appelés microplastiques.",
+          "Ils sont absorbés par les arbres."
+        ]
+      },
+      "answer": {
+        "en": "C. It breaks into tiny pieces called microplastics.",
+        "fr": "C. Ils se fragmentent en très petits morceaux appelés microplastiques."
+      },
+      "funFact": {
+        "en": "Over time, plastic breaks into tiny pieces. They end up in water, soil and living things.",
+        "fr": "Avec le temps, le plastique se fragmente en minuscules morceaux. Ils se retrouvent dans l'eau, les sols et les êtres vivants."
+      }
+    },
+    {
+      "id": "q-13",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "True or false: a cloud can weigh hundreds of tonnes.",
+        "fr": "Vrai ou faux : les nuages peuvent peser plusieurs centaines de tonnes."
+      },
+      "answer": {
+        "en": "True.",
+        "fr": "Vrai."
+      }
+    },
+    {
+      "id": "q-14",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What is the biggest animal on Earth?",
+        "fr": "Quel est le plus grand animal vivant sur Terre ?"
+      },
+      "answer": {
+        "en": "The blue whale.",
+        "fr": "La baleine bleue."
+      },
+      "funFact": {
+        "en": "Its heart can weigh more than 150 kg.",
+        "fr": "Son cœur peut peser plus de 150 kg."
+      }
+    },
+    {
+      "id": "q-15",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You go hiking. Can you throw a banana skin in nature because it is biodegradable?",
+        "fr": "Tu pars en randonnée. Peux-tu jeter une peau de banane dans la nature puisqu'elle est biodégradable ?"
+      },
+      "answer": {
+        "en": "No, take it home with your rubbish.",
+        "fr": "Non, il faut la rapporter avec ses déchets."
+      },
+      "funFact": {
+        "en": "Even natural waste can take several months to break down.",
+        "fr": "Même un déchet naturel peut mettre plusieurs mois à se décomposer."
+      }
+    },
+    {
+      "id": "q-16",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "How long can a plastic bottle take to break down in nature?",
+        "fr": "Combien de temps une bouteille en plastique peut-elle mettre à se dégrader dans la nature ?"
+      },
+      "choices": {
+        "en": ["About 10 years", "About 50 years", "About 450 years", "About 1,000 years"],
+        "fr": ["Environ 10 ans", "Environ 50 ans", "Environ 450 ans", "Environ 1 000 ans"]
+      },
+      "answer": {
+        "en": "C. About 450 years.",
+        "fr": "C. Environ 450 ans."
+      },
+      "funFact": {
+        "en": "Even after that, it can leave microplastics in the environment.",
+        "fr": "Et même après, elle peut laisser des microplastiques dans l'environnement."
+      }
+    },
+    {
+      "id": "q-17",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "Which living thing makes a big part of the oxygen we breathe?",
+        "fr": "Quel être vivant fabrique une grande partie de l'oxygène que nous respirons ?"
+      },
+      "choices": {
+        "en": ["The dolphin", "Plant plankton", "The shark", "The sea turtle"],
+        "fr": ["Le dauphin", "Le plancton végétal", "Le requin", "La tortue marine"]
+      },
+      "answer": {
+        "en": "B. Plant plankton.",
+        "fr": "B. Le plancton végétal."
+      },
+      "funFact": {
+        "en": "Phytoplankton are tiny living things in the oceans. They make a lot of the planet's oxygen with photosynthesis.",
+        "fr": "Le phytoplancton, de minuscules organismes des océans, produit une grande partie de l'oxygène de la planète grâce à la photosynthèse."
+      }
+    },
+    {
+      "id": "q-18",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "True or false: mountains can keep growing.",
+        "fr": "Vrai ou faux : les montagnes peuvent continuer à grandir."
+      },
+      "answer": {
+        "en": "True.",
+        "fr": "Vrai."
+      },
+      "funFact": {
+        "en": "The Himalayas are still rising because the Earth's plates move.",
+        "fr": "L'Himalaya continue de se soulever sous l'effet du mouvement des plaques tectoniques."
+      }
+    },
+    {
+      "id": "q-19",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "What happens when you send an email with a big attachment?",
+        "fr": "Que se passe-t-il lorsqu'on envoie un e-mail avec une pièce jointe volumineuse ?"
+      },
+      "choices": {
+        "en": ["It uses no energy.", "It uses servers and networks that need electricity.", "It always goes by satellite.", "It is printed in a data centre."],
+        "fr": [
+          "Il ne consomme aucune énergie.",
+          "Il utilise des serveurs et des réseaux qui consomment de l'électricité.",
+          "Il est toujours envoyé par satellite.",
+          "Il est imprimé dans un centre de données."
+        ]
+      },
+      "answer": {
+        "en": "B. It uses servers and networks that need electricity.",
+        "fr": "B. Il utilise des serveurs et des réseaux qui consomment de l'électricité."
+      },
+      "funFact": {
+        "en": "Emails travel through networks and servers. They need electricity to work and to stay cool.",
+        "fr": "Les e-mails passent par des réseaux et des serveurs. Ils consomment de l'électricité pour fonctionner et être refroidis."
+      }
+    },
+    {
+      "id": "q-20",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "What problem can get worse when forests disappear?",
+        "fr": "Quel phénomène peut être aggravé par la disparition des forêts ?"
+      },
+      "choices": {
+        "en": ["Droughts and soil erosion", "Mountains forming", "The Earth's rotation", "Ocean tides"],
+        "fr": ["Les sécheresses et l'érosion des sols", "La formation des montagnes", "La rotation de la Terre", "Les marées océaniques"]
+      },
+      "answer": {
+        "en": "A. Droughts and soil erosion.",
+        "fr": "A. Les sécheresses et l'érosion des sols."
+      },
+      "funFact": {
+        "en": "Trees hold the soil, help the water cycle and absorb CO₂.",
+        "fr": "Les arbres retiennent les sols, participent au cycle de l'eau et absorbent du CO₂."
+      }
+    },
+    {
+      "id": "q-21",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "How does internet data mostly travel between continents?",
+        "fr": "Comment les données Internet circulent-elles principalement entre les continents ?"
+      },
+      "choices": {
+        "en": ["Satellites around the Earth", "Fibre optic cables under the oceans", "5G antennas in big cities"],
+        "fr": ["Les satellites autour de la Terre", "Des câbles de fibre optique au fond des océans", "Les antennes 5G des grandes villes"]
+      },
+      "answer": {
+        "en": "B. Through fibre optic cables under the oceans.",
+        "fr": "B. Grâce à des câbles de fibre optique au fond des océans."
+      },
+      "funFact": {
+        "en": "Almost all data between continents goes through cables under the sea, not satellites.",
+        "fr": "Presque toutes les données entre continents passent par des câbles sous-marins, pas par satellite."
+      }
+    },
+    {
+      "id": "q-22",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "Do young sunflowers follow the sun?",
+        "fr": "Les jeunes tournesols suivent-ils le mouvement du soleil ?"
+      },
+      "answer": {
+        "en": "Yes.",
+        "fr": "Oui."
+      },
+      "funFact": {
+        "en": "This is called heliotropism. Adult sunflowers usually stay facing east.",
+        "fr": "C'est l'héliotropisme. Les tournesols adultes restent généralement orientés vers l'est."
+      }
+    },
+    {
+      "id": "q-23",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "I fall from the sky, I usually have six branches and I melt in your hand. Who am I?",
+        "fr": "Je tombe du ciel, je possède généralement six branches et je fonds dans ta main. Qui suis-je ?"
+      },
+      "answer": {
+        "en": "A snowflake.",
+        "fr": "Un flocon de neige."
+      },
+      "funFact": {
+        "en": "Ice crystals have six sides. That is why snowflakes have six branches.",
+        "fr": "La structure des cristaux de glace explique la symétrie à six branches."
+      }
+    },
+    {
+      "id": "q-24",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "True or false: some rubbish can last longer than a human life.",
+        "fr": "Vrai ou faux : certains déchets peuvent mettre plus longtemps à disparaître que la durée de vie d'un être humain."
+      },
+      "answer": {
+        "en": "True.",
+        "fr": "Vrai."
+      },
+      "funFact": {
+        "en": "Plastic bottles or fishing lines can stay in nature for hundreds of years.",
+        "fr": "Les bouteilles en plastique ou les lignes de pêche peuvent rester des centaines d'années dans la nature."
+      }
+    },
+    {
+      "id": "q-25",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What is the deepest ocean in the world?",
+        "fr": "Quel est l'océan le plus profond du monde ?"
+      },
+      "answer": {
+        "en": "The Pacific Ocean.",
+        "fr": "L'océan Pacifique."
+      },
+      "funFact": {
+        "en": "It has the Mariana Trench, almost 11 km deep.",
+        "fr": "Il abrite la fosse des Mariannes, profonde de près de 11 km."
+      }
+    },
+    {
+      "id": "q-26",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Which digital activity can use a lot of energy when millions of people do it?",
+        "fr": "Quelle activité numérique peut consommer beaucoup d'énergie lorsqu'elle est pratiquée à grande échelle ?"
+      },
+      "choices": {
+        "en": ["Streaming videos", "Writing a note on your phone", "Setting your alarm", "Changing your wallpaper"],
+        "fr": ["Regarder des vidéos en streaming", "Écrire une note sur son téléphone", "Régler son réveil", "Changer son fond d'écran"]
+      },
+      "answer": {
+        "en": "A. Streaming videos.",
+        "fr": "A. Regarder des vidéos en streaming."
+      },
+      "funFact": {
+        "en": "Streaming needs data centres, networks and devices. HD and long videos use more.",
+        "fr": "Le streaming nécessite des centres de données, des réseaux et des appareils. La HD et les longues vidéos consomment plus."
+      }
+    },
+    {
+      "id": "q-27",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why are coral reefs so important for sea life?",
+        "fr": "Pourquoi les récifs coralliens sont-ils si importants pour la biodiversité marine ?"
+      },
+      "choices": {
+        "en": [
+          "They stop all storms.",
+          "They are a home for lots of species.",
+          "They make all the drinking water on the planet.",
+          "They stop the oceans from rising."
+        ],
+        "fr": [
+          "Ils empêchent toutes les tempêtes.",
+          "Ils servent d'abri et de lieu de vie à de nombreuses espèces.",
+          "Ils produisent toute l'eau potable de la planète.",
+          "Ils empêchent les océans de monter."
+        ]
+      },
+      "answer": {
+        "en": "B. They are a home for lots of species.",
+        "fr": "B. Ils servent d'abri et de lieu de vie à de nombreuses espèces."
+      },
+      "funFact": {
+        "en": "Coral reefs cover a tiny part of the ocean floor but are home to a huge number of species.",
+        "fr": "Les récifs coralliens occupent une petite partie des fonds marins mais abritent une immense diversité d'espèces."
+      }
+    },
+    {
+      "id": "q-28",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What can we get back when we recycle old electronic devices?",
+        "fr": "Que peut-on récupérer en recyclant certains vieux appareils électroniques ?"
+      },
+      "choices": {
+        "en": ["Gold and copper", "Crude oil", "Natural sand", "Coal"],
+        "fr": ["De l'or et du cuivre", "Du pétrole brut", "Du sable naturel", "Du charbon"]
+      },
+      "answer": {
+        "en": "A. Gold and copper.",
+        "fr": "A. De l'or et du cuivre."
+      },
+      "funFact": {
+        "en": "Phones and computers contain useful metals like gold, copper and silver. Recycling them means less mining.",
+        "fr": "Téléphones et ordinateurs contiennent des métaux comme l'or, le cuivre et l'argent. Les récupérer limite l'extraction minière."
+      }
+    },
+    {
+      "id": "q-29",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "Your phone battery is at 100%. What do you do with the charger?",
+        "fr": "Ta batterie est à 100 %. Que fais-tu du chargeur ?"
+      },
+      "answer": {
+        "en": "Unplug it.",
+        "fr": "Je le débranche."
+      }
+    },
+    {
+      "id": "q-30",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You leave your bedroom for the evening. What do you do with the light?",
+        "fr": "Tu quittes ta chambre pour la soirée. Que fais-tu de la lumière ?"
+      },
+      "answer": {
+        "en": "Turn it off.",
+        "fr": "Je l'éteins."
+      }
+    },
+    {
+      "id": "q-31",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You watch a video on a small phone screen. Do you choose 4K or a lower quality?",
+        "fr": "Tu regardes une vidéo sur un petit écran de téléphone. Tu choisis la 4K ou une qualité plus basse ?"
+      },
+      "answer": {
+        "en": "A lower quality. It uses less data and energy.",
+        "fr": "Une qualité plus basse. Elle consomme moins de données et d'énergie."
+      }
+    },
+    {
+      "id": "q-32",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "Your old phone is broken and you can't repair it. Where do you take it?",
+        "fr": "Ton vieux téléphone est cassé et irréparable. Où l'apportes-tu ?"
+      },
+      "answer": {
+        "en": "To a collection point or a shop that recycles phones.",
+        "fr": "À un point de collecte ou dans un magasin qui recycle les téléphones."
+      }
+    },
+    {
+      "id": "q-33",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You need a new jacket. What is the greenest choice?",
+        "fr": "Tu as besoin d'une nouvelle veste. Quel est le choix le plus écolo ?"
+      },
+      "choices": {
+        "en": ["Buy a new one every year", "Buy a second-hand jacket", "Buy one and throw it away after a month"],
+        "fr": ["En acheter une neuve chaque année", "Acheter une veste d'occasion", "En acheter une et la jeter au bout d'un mois"]
+      },
+      "answer": {
+        "en": "B. Buy a second-hand jacket.",
+        "fr": "B. Acheter une veste d'occasion."
+      }
+    },
+    {
+      "id": "q-34",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You see a plastic bag on the beach. What do you do?",
+        "fr": "Tu vois un sac plastique sur la plage. Que fais-tu ?"
+      },
+      "answer": {
+        "en": "Pick it up and put it in a bin.",
+        "fr": "Je le ramasse et je le mets à la poubelle."
+      },
+      "funFact": {
+        "en": "Plastic bags in the sea can look like jellyfish to sea turtles.",
+        "fr": "Dans la mer, les sacs plastiques ressemblent à des méduses pour les tortues."
+      }
+    },
+    {
+      "id": "q-35",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You have 200 photos in the cloud that you never look at. What can you do?",
+        "fr": "Tu as 200 photos dans le cloud que tu ne regardes jamais. Que peux-tu faire ?"
+      },
+      "answer": {
+        "en": "Delete them. It saves space on servers.",
+        "fr": "Les supprimer. Cela libère de la place sur les serveurs."
+      }
+    },
+    {
+      "id": "q-36",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You brush your teeth. What do you do with the tap?",
+        "fr": "Tu te brosses les dents. Que fais-tu du robinet ?"
+      },
+      "answer": {
+        "en": "Turn it off while you brush.",
+        "fr": "Je le ferme pendant que je me brosse les dents."
+      },
+      "funFact": {
+        "en": "A running tap uses several litres of water every minute.",
+        "fr": "Un robinet ouvert consomme plusieurs litres d'eau par minute."
+      }
+    },
+    {
+      "id": "q-37",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "Your school is 1 km from your home. How can you get there in a green way?",
+        "fr": "Ton école est à 1 km de chez toi. Comment y aller de façon écolo ?"
+      },
+      "answer": {
+        "en": "Walk or ride a bike.",
+        "fr": "À pied ou à vélo."
+      }
+    },
+    {
+      "id": "q-38",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You want to listen to the same album every day. What is greener: stream it or download it once?",
+        "fr": "Tu veux écouter le même album tous les jours. Qu'est-ce qui est plus écolo : le streamer ou le télécharger une fois ?"
+      },
+      "answer": {
+        "en": "Download it once and listen offline.",
+        "fr": "Le télécharger une fois et l'écouter hors ligne."
+      }
+    },
+    {
+      "id": "q-39",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You finish your yoghurt. Where does the empty pot go?",
+        "fr": "Tu as fini ton yaourt. Où va le pot vide ?"
+      },
+      "answer": {
+        "en": "In the recycling bin (the yellow bin in France).",
+        "fr": "Dans la poubelle de tri (la poubelle jaune en France)."
+      }
+    },
+    {
+      "id": "q-40",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "Your computer is on, but you go to lunch. What do you do?",
+        "fr": "Ton ordinateur est allumé, mais tu pars déjeuner. Que fais-tu ?"
+      },
+      "answer": {
+        "en": "Put it to sleep or turn it off.",
+        "fr": "Je le mets en veille ou je l'éteins."
+      }
+    },
+    {
+      "id": "q-41",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "Your friend wants to throw away an old T-shirt. What can you say?",
+        "fr": "Ton ami veut jeter un vieux T-shirt. Que peux-tu lui dire ?"
+      },
+      "answer": {
+        "en": "Give it away, use it as a cloth, or recycle it.",
+        "fr": "Le donner, en faire un chiffon ou le recycler."
+      }
+    },
+    {
+      "id": "q-42",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "It is very hot in summer. How can you stay cool without air conditioning?",
+        "fr": "Il fait très chaud en été. Comment rester au frais sans climatisation ?"
+      },
+      "answer": {
+        "en": "Close the shutters in the day, use a fan and drink water.",
+        "fr": "Fermer les volets la journée, utiliser un ventilateur et boire de l'eau."
+      }
+    },
+    {
+      "id": "q-43",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You want to send the same file to 10 friends. What is greener?",
+        "fr": "Tu veux envoyer le même fichier à 10 amis. Qu'est-ce qui est plus écolo ?"
+      },
+      "choices": {
+        "en": ["Send 10 emails with the file", "Share one link"],
+        "fr": ["Envoyer 10 e-mails avec le fichier", "Partager un seul lien"]
+      },
+      "answer": {
+        "en": "B. Share one link.",
+        "fr": "B. Partager un seul lien."
+      }
+    },
+    {
+      "id": "q-44",
+      "deck": "questions",
+      "category": "apply",
+      "text": {
+        "en": "You find a baby bird on the ground in spring. What do you do?",
+        "fr": "Tu trouves un oisillon par terre au printemps. Que fais-tu ?"
+      },
+      "answer": {
+        "en": "Don't take it home. Leave it and tell an adult.",
+        "fr": "Je ne le ramène pas chez moi. Je le laisse et je préviens un adulte."
+      },
+      "funFact": {
+        "en": "Often, the parents are close and still feed it.",
+        "fr": "Souvent, ses parents sont tout près et continuent de le nourrir."
+      }
+    },
+    {
+      "id": "q-45",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What do bees make?",
+        "fr": "Que fabriquent les abeilles ?"
+      },
+      "answer": {
+        "en": "Honey and wax.",
+        "fr": "Du miel et de la cire."
+      }
+    },
+    {
+      "id": "q-46",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "Which energy is renewable?",
+        "fr": "Quelle énergie est renouvelable ?"
+      },
+      "choices": {
+        "en": ["Coal", "Wind", "Oil", "Gas"],
+        "fr": ["Le charbon", "Le vent", "Le pétrole", "Le gaz"]
+      },
+      "answer": {
+        "en": "B. Wind.",
+        "fr": "B. Le vent."
+      }
+    },
+    {
+      "id": "q-47",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What is compost?",
+        "fr": "Qu'est-ce que le compost ?"
+      },
+      "answer": {
+        "en": "Food and garden waste that turns into soil for plants.",
+        "fr": "Des déchets de cuisine et de jardin qui deviennent de la terre pour les plantes."
+      }
+    },
+    {
+      "id": "q-48",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "True or false: trees absorb CO₂.",
+        "fr": "Vrai ou faux : les arbres absorbent du CO₂."
+      },
+      "answer": {
+        "en": "True.",
+        "fr": "Vrai."
+      },
+      "funFact": {
+        "en": "Trees use CO₂, water and sunlight to grow.",
+        "fr": "Les arbres utilisent le CO₂, l'eau et la lumière du soleil pour grandir."
+      }
+    },
+    {
+      "id": "q-49",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "I am green, I live in water and on land, and I start my life as a tadpole. Who am I?",
+        "fr": "Je suis vert, je vis dans l'eau et sur terre, et je commence ma vie en têtard. Qui suis-je ?"
+      },
+      "answer": {
+        "en": "A frog.",
+        "fr": "Une grenouille."
+      }
+    },
+    {
+      "id": "q-50",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "Which gas from human activity causes most global warming?",
+        "fr": "Quel gaz issu des activités humaines cause le plus le réchauffement climatique ?"
+      },
+      "choices": {
+        "en": ["Oxygen", "Carbon dioxide (CO₂)", "Helium"],
+        "fr": ["L'oxygène", "Le dioxyde de carbone (CO₂)", "L'hélium"]
+      },
+      "answer": {
+        "en": "B. Carbon dioxide (CO₂).",
+        "fr": "B. Le dioxyde de carbone (CO₂)."
+      }
+    },
+    {
+      "id": "q-51",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What is a second-hand object?",
+        "fr": "Qu'est-ce qu'un objet d'occasion ?"
+      },
+      "answer": {
+        "en": "An object that someone used before you.",
+        "fr": "Un objet que quelqu'un a utilisé avant toi."
+      }
+    },
+    {
+      "id": "q-52",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "How many legs does a spider have?",
+        "fr": "Combien de pattes a une araignée ?"
+      },
+      "answer": {
+        "en": "8 legs.",
+        "fr": "8 pattes."
+      }
+    },
+    {
+      "id": "q-53",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What is the biggest rainforest in the world?",
+        "fr": "Quelle est la plus grande forêt tropicale du monde ?"
+      },
+      "choices": {
+        "en": ["The Amazon", "The Sahara", "The Alps"],
+        "fr": ["L'Amazonie", "Le Sahara", "Les Alpes"]
+      },
+      "answer": {
+        "en": "A. The Amazon.",
+        "fr": "A. L'Amazonie."
+      }
+    },
+    {
+      "id": "q-54",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "True or false: koalas can sleep up to 20 hours a day.",
+        "fr": "Vrai ou faux : les koalas peuvent dormir jusqu'à 20 heures par jour."
+      },
+      "answer": {
+        "en": "True.",
+        "fr": "Vrai."
+      },
+      "funFact": {
+        "en": "Eucalyptus leaves give them very little energy.",
+        "fr": "Les feuilles d'eucalyptus leur apportent très peu d'énergie."
+      }
+    },
+    {
+      "id": "q-55",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "What do we call animals that eat only plants?",
+        "fr": "Comment appelle-t-on les animaux qui ne mangent que des plantes ?"
+      },
+      "answer": {
+        "en": "Herbivores.",
+        "fr": "Les herbivores."
+      }
+    },
+    {
+      "id": "q-56",
+      "deck": "questions",
+      "category": "learn",
+      "text": {
+        "en": "I live in the sea, I have eight arms and I can change colour. Who am I?",
+        "fr": "Je vis dans la mer, j'ai huit bras et je peux changer de couleur. Qui suis-je ?"
+      },
+      "answer": {
+        "en": "An octopus.",
+        "fr": "Une pieuvre."
+      }
+    },
+    {
+      "id": "q-57",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why do we sort our rubbish?",
+        "fr": "Pourquoi trie-t-on nos déchets ?"
+      },
+      "answer": {
+        "en": "So it can be recycled into new things.",
+        "fr": "Pour qu'ils soient recyclés en nouveaux objets."
+      }
+    },
+    {
+      "id": "q-58",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why is it bad to buy a new phone every year?",
+        "fr": "Pourquoi est-ce mauvais d'acheter un nouveau téléphone chaque année ?"
+      },
+      "answer": {
+        "en": "Making a phone uses a lot of metals, water and energy.",
+        "fr": "Fabriquer un téléphone demande beaucoup de métaux, d'eau et d'énergie."
+      },
+      "funFact": {
+        "en": "Most of a phone's impact on the planet comes from making it, not using it.",
+        "fr": "La plus grande partie de l'impact d'un téléphone vient de sa fabrication, pas de son utilisation."
+      }
+    },
+    {
+      "id": "q-59",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "True or false: dark mode can make some phone batteries last longer.",
+        "fr": "Vrai ou faux : le mode sombre peut faire durer plus longtemps la batterie de certains téléphones."
+      },
+      "answer": {
+        "en": "True, on OLED screens.",
+        "fr": "Vrai, sur les écrans OLED."
+      }
+    },
+    {
+      "id": "q-60",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why are bees in danger?",
+        "fr": "Pourquoi les abeilles sont-elles en danger ?"
+      },
+      "answer": {
+        "en": "Pesticides, fewer flowers and climate change.",
+        "fr": "Les pesticides, la disparition des fleurs et le changement climatique."
+      }
+    },
+    {
+      "id": "q-61",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why does a big TV use more energy than a phone?",
+        "fr": "Pourquoi une grande télé consomme-t-elle plus d'énergie qu'un téléphone ?"
+      },
+      "answer": {
+        "en": "Its screen is much bigger, so it needs more light.",
+        "fr": "Son écran est bien plus grand, il lui faut plus de lumière."
+      }
+    },
+    {
+      "id": "q-62",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why is the ice in the Arctic melting?",
+        "fr": "Pourquoi la glace de l'Arctique fond-elle ?"
+      },
+      "choices": {
+        "en": ["Because of global warming", "Because of fishing", "Because of too many tourists"],
+        "fr": ["À cause du réchauffement climatique", "À cause de la pêche", "À cause de trop de touristes"]
+      },
+      "answer": {
+        "en": "A. Because of global warming.",
+        "fr": "A. À cause du réchauffement climatique."
+      }
+    },
+    {
+      "id": "q-63",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why is it good to eat fruit and vegetables in season?",
+        "fr": "Pourquoi est-ce bien de manger des fruits et légumes de saison ?"
+      },
+      "answer": {
+        "en": "They travel less and need less energy to grow.",
+        "fr": "Ils voyagent moins et demandent moins d'énergie pour pousser."
+      }
+    },
+    {
+      "id": "q-64",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "True or false: for the same trip, a train usually pollutes less than a plane.",
+        "fr": "Vrai ou faux : pour le même trajet, le train pollue généralement moins que l'avion."
+      },
+      "answer": {
+        "en": "True.",
+        "fr": "Vrai."
+      }
+    },
+    {
+      "id": "q-65",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why do data centres need a lot of water?",
+        "fr": "Pourquoi les data centers ont-ils besoin de beaucoup d'eau ?"
+      },
+      "answer": {
+        "en": "To cool down the hot computers.",
+        "fr": "Pour refroidir les ordinateurs qui chauffent."
+      }
+    },
+    {
+      "id": "q-66",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "Why is a water bottle you can refill better than plastic bottles?",
+        "fr": "Pourquoi une gourde est-elle mieux que des bouteilles en plastique ?"
+      },
+      "answer": {
+        "en": "It makes much less plastic waste.",
+        "fr": "Elle produit beaucoup moins de déchets plastiques."
+      }
+    },
+    {
+      "id": "q-67",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "How do frogs help a garden?",
+        "fr": "Comment les grenouilles aident-elles un jardin ?"
+      },
+      "choices": {
+        "en": ["They eat insects.", "They make honey.", "They plant trees."],
+        "fr": ["Elles mangent des insectes.", "Elles font du miel.", "Elles plantent des arbres."]
+      },
+      "answer": {
+        "en": "A. They eat insects.",
+        "fr": "A. Elles mangent des insectes."
+      }
+    },
+    {
+      "id": "q-68",
+      "deck": "questions",
+      "category": "understand",
+      "text": {
+        "en": "True or false: paper can be recycled many times, but not forever.",
+        "fr": "Vrai ou faux : le papier peut être recyclé plusieurs fois, mais pas à l'infini."
+      },
+      "answer": {
+        "en": "True.",
+        "fr": "Vrai."
+      },
+      "funFact": {
+        "en": "Paper fibres get shorter each time. Paper can be recycled about 5 to 7 times.",
+        "fr": "Les fibres raccourcissent à chaque fois. Le papier se recycle environ 5 à 7 fois."
+      }
+    },
+    {
+      "id": "c-1",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 4 effects of global warming wins!",
+        "fr": "La première équipe qui cite quatre conséquences du réchauffement climatique gagne !"
+      },
+      "answer": {
+        "en": "Rising seas, heatwaves, melting glaciers, droughts…",
+        "fr": "Montée des eaux, canicules, fonte des glaciers, sécheresses…"
+      }
+    },
+    {
+      "id": "c-2",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 3 things you can recycle wins!",
+        "fr": "La première équipe qui cite 3 choses recyclables gagne !"
+      },
+      "answer": {
+        "en": "Paper, glass, cans, plastic bottles…",
+        "fr": "Papier, verre, canettes, bouteilles en plastique…"
+      }
+    },
+    {
+      "id": "c-3",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 3 renewable energies wins!",
+        "fr": "La première équipe qui cite 3 énergies renouvelables gagne !"
+      },
+      "answer": {
+        "en": "Sun, wind, water…",
+        "fr": "Le soleil, le vent, l'eau…"
+      }
+    },
+    {
+      "id": "c-4",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 4 animals that live in the sea wins!",
+        "fr": "La première équipe qui cite 4 animaux marins gagne !"
+      },
+      "answer": {
+        "en": "Whale, shark, octopus, turtle…",
+        "fr": "Baleine, requin, pieuvre, tortue…"
+      }
+    },
+    {
+      "id": "c-5",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 3 things that use electricity at home wins!",
+        "fr": "La première équipe qui cite 3 objets électriques de la maison gagne !"
+      },
+      "answer": {
+        "en": "Fridge, TV, computer, lamp…",
+        "fr": "Frigo, télé, ordinateur, lampe…"
+      }
+    },
+    {
+      "id": "c-6",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 3 insects wins!",
+        "fr": "La première équipe qui cite 3 insectes gagne !"
+      },
+      "answer": {
+        "en": "Bee, ant, ladybird, butterfly…",
+        "fr": "Abeille, fourmi, coccinelle, papillon…"
+      }
+    },
+    {
+      "id": "c-7",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to give 2 ideas to use a phone less wins!",
+        "fr": "La première équipe qui donne 2 idées pour moins utiliser son téléphone gagne !"
+      },
+      "answer": {
+        "en": "No phone at dinner, turn off notifications…",
+        "fr": "Pas de téléphone à table, couper les notifications…"
+      }
+    },
+    {
+      "id": "c-8",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 3 things made of plastic in the classroom wins!",
+        "fr": "La première équipe qui cite 3 objets en plastique de la classe gagne !"
+      },
+      "answer": {
+        "en": "Pen, ruler, bottle…",
+        "fr": "Stylo, règle, bouteille…"
+      }
+    },
+    {
+      "id": "c-9",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 4 fruits or vegetables wins!",
+        "fr": "La première équipe qui cite 4 fruits ou légumes gagne !"
+      },
+      "answer": {
+        "en": "Apple, carrot, pear, pumpkin…",
+        "fr": "Pomme, carotte, poire, citrouille…"
+      }
+    },
+    {
+      "id": "c-10",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to give 3 ways to save water at home wins!",
+        "fr": "La première équipe qui donne 3 façons d'économiser l'eau à la maison gagne !"
+      },
+      "answer": {
+        "en": "Short showers, turn off the tap, fix leaks…",
+        "fr": "Douches courtes, fermer le robinet, réparer les fuites…"
+      }
+    },
+    {
+      "id": "c-11",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to name 3 things you can do with an old T-shirt wins!",
+        "fr": "La première équipe qui cite 3 usages d'un vieux T-shirt gagne !"
+      },
+      "answer": {
+        "en": "Give it, make a cloth, make a bag…",
+        "fr": "Le donner, en faire un chiffon, un sac…"
+      }
+    },
+    {
+      "id": "c-12",
+      "deck": "questions",
+      "category": "challenge",
+      "text": {
+        "en": "First team to say 5 nature words in English wins!",
+        "fr": "La première équipe qui dit 5 mots de la nature en anglais gagne !"
+      },
+      "answer": {
+        "en": "Tree, river, flower, leaf, mountain…",
+        "fr": "Tree, river, flower, leaf, mountain…"
+      }
+    },
+    {
+      "id": "bonus-1",
+      "deck": "bonus",
+      "title": {
+        "en": "Lucky seed",
+        "fr": "Graine de chance"
+      },
+      "text": {
+        "en": "Roll the dice again.",
+        "fr": "Relance les dés."
       },
       "effect": {
-        "scoreDelta": -2
-      }
+        "rollAgain": true
+      },
+      "use": "turn",
+      "keep": true
     },
     {
-      "id": "malus-002",
-      "type": "malus",
-      "question": {
-        "en": "E-waste pile! The other team goes back 3 squares.",
-        "fr": "Tas de déchets électroniques ! L'autre équipe recule de 3 cases."
+      "id": "bonus-2",
+      "deck": "bonus",
+      "title": {
+        "en": "Green shield",
+        "fr": "Bouclier vert"
       },
-      "answer": {
-        "en": "",
-        "fr": ""
+      "text": {
+        "en": "Cancel the next malus on your team.",
+        "fr": "Annule le prochain malus sur ton équipe."
       },
       "effect": {
-        "moveDelta": -3
+        "shield": true
+      },
+      "use": "malus",
+      "keep": true
+    },
+    {
+      "id": "bonus-3",
+      "deck": "bonus",
+      "title": {
+        "en": "Tailwind",
+        "fr": "Vent arrière"
+      },
+      "text": {
+        "en": "Move forward 2 squares.",
+        "fr": "Avance de 2 cases."
+      },
+      "effect": {
+        "move": 2
+      },
+      "use": "turn",
+      "keep": true
+    },
+    {
+      "id": "bonus-4",
+      "deck": "bonus",
+      "title": {
+        "en": "Solar boost",
+        "fr": "Boost solaire"
+      },
+      "text": {
+        "en": "Your team wins 2 points.",
+        "fr": "Ton équipe gagne 2 points."
+      },
+      "effect": {
+        "points": 2
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-5",
+      "deck": "bonus",
+      "title": {
+        "en": "Repair café",
+        "fr": "Repair café"
+      },
+      "text": {
+        "en": "You fixed a phone! Your team wins 3 points.",
+        "fr": "Tu as réparé un téléphone ! Ton équipe gagne 3 points."
+      },
+      "effect": {
+        "points": 3
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-6",
+      "deck": "bonus",
+      "title": {
+        "en": "Bike ride",
+        "fr": "Balade à vélo"
+      },
+      "text": {
+        "en": "Move forward 3 squares.",
+        "fr": "Avance de 3 cases."
+      },
+      "effect": {
+        "move": 3
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-7",
+      "deck": "bonus",
+      "title": {
+        "en": "Green shield",
+        "fr": "Bouclier vert"
+      },
+      "text": {
+        "en": "Cancel the next malus on your team.",
+        "fr": "Annule le prochain malus sur ton équipe."
+      },
+      "effect": {
+        "shield": true
+      },
+      "use": "malus",
+      "keep": true
+    },
+    {
+      "id": "bonus-8",
+      "deck": "bonus",
+      "title": {
+        "en": "Lucky seed",
+        "fr": "Graine de chance"
+      },
+      "text": {
+        "en": "Roll the dice again.",
+        "fr": "Relance les dés."
+      },
+      "effect": {
+        "rollAgain": true
+      },
+      "use": "turn",
+      "keep": true
+    },
+    {
+      "id": "bonus-9",
+      "deck": "bonus",
+      "title": {
+        "en": "Planted tree",
+        "fr": "Arbre planté"
+      },
+      "text": {
+        "en": "Your team wins 1 point.",
+        "fr": "Ton équipe gagne 1 point."
+      },
+      "effect": {
+        "points": 1
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-10",
+      "deck": "bonus",
+      "title": {
+        "en": "Second life",
+        "fr": "Seconde vie"
+      },
+      "text": {
+        "en": "You gave your old phone. Your team wins 2 points.",
+        "fr": "Tu as donné ton vieux téléphone. Ton équipe gagne 2 points."
+      },
+      "effect": {
+        "points": 2
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-11",
+      "deck": "bonus",
+      "title": {
+        "en": "Bee friend",
+        "fr": "Amie des abeilles"
+      },
+      "text": {
+        "en": "You planted flowers for the bees. Your team wins 2 points.",
+        "fr": "Tu as planté des fleurs pour les abeilles. Ton équipe gagne 2 points."
+      },
+      "effect": {
+        "points": 2
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-12",
+      "deck": "bonus",
+      "title": {
+        "en": "Train trip",
+        "fr": "Voyage en train"
+      },
+      "text": {
+        "en": "Move forward 2 squares.",
+        "fr": "Avance de 2 cases."
+      },
+      "effect": {
+        "move": 2
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-13",
+      "deck": "bonus",
+      "title": {
+        "en": "Clean beach",
+        "fr": "Plage propre"
+      },
+      "text": {
+        "en": "You cleaned the beach! Your team wins 3 points.",
+        "fr": "Tu as nettoyé la plage ! Ton équipe gagne 3 points."
+      },
+      "effect": {
+        "points": 3
+      },
+      "use": "now"
+    },
+    {
+      "id": "bonus-14",
+      "deck": "bonus",
+      "title": {
+        "en": "Green shield",
+        "fr": "Bouclier vert"
+      },
+      "text": {
+        "en": "Cancel the next malus on your team.",
+        "fr": "Annule le prochain malus sur ton équipe."
+      },
+      "effect": {
+        "shield": true
+      },
+      "use": "malus",
+      "keep": true
+    },
+    {
+      "id": "malus-1",
+      "deck": "malus",
+      "title": {
+        "en": "Plastic storm",
+        "fr": "Tempête de plastique"
+      },
+      "text": {
+        "en": "Move back 3 squares and lose 2 points.",
+        "fr": "Recule de 3 cases et perds 2 points."
+      },
+      "effect": {
+        "move": -3,
+        "points": -2
       }
     },
     {
-      "id": "malus-003",
-      "type": "malus",
-      "question": {
-        "en": "Battery empty! The other team skips its next turn.",
-        "fr": "Batterie vide ! L'autre équipe passe son prochain tour."
+      "id": "malus-2",
+      "deck": "malus",
+      "title": {
+        "en": "Power cut",
+        "fr": "Coupure de courant"
       },
-      "answer": {
-        "en": "",
-        "fr": ""
+      "text": {
+        "en": "Your team loses 2 points.",
+        "fr": "Ton équipe perd 2 points."
+      },
+      "effect": {
+        "points": -2
+      }
+    },
+    {
+      "id": "malus-3",
+      "deck": "malus",
+      "title": {
+        "en": "Traffic jam",
+        "fr": "Embouteillage"
+      },
+      "text": {
+        "en": "Skip your next turn.",
+        "fr": "Passe ton prochain tour."
       },
       "effect": {
         "skipTurn": true
+      }
+    },
+    {
+      "id": "malus-4",
+      "deck": "malus",
+      "title": {
+        "en": "Screen marathon",
+        "fr": "Marathon d’écran"
+      },
+      "text": {
+        "en": "Move back 2 squares.",
+        "fr": "Recule de 2 cases."
+      },
+      "effect": {
+        "move": -2
+      }
+    },
+    {
+      "id": "malus-5",
+      "deck": "malus",
+      "title": {
+        "en": "4K binge",
+        "fr": "Série en 4K"
+      },
+      "text": {
+        "en": "Your team loses 3 points.",
+        "fr": "Ton équipe perd 3 points."
+      },
+      "effect": {
+        "points": -3
+      }
+    },
+    {
+      "id": "malus-6",
+      "deck": "malus",
+      "title": {
+        "en": "Lost charger",
+        "fr": "Chargeur perdu"
+      },
+      "text": {
+        "en": "Skip your next turn.",
+        "fr": "Passe ton prochain tour."
+      },
+      "effect": {
+        "skipTurn": true
+      }
+    },
+    {
+      "id": "malus-7",
+      "deck": "malus",
+      "title": {
+        "en": "Full inbox",
+        "fr": "Boîte pleine"
+      },
+      "text": {
+        "en": "Your team loses 1 point.",
+        "fr": "Ton équipe perd 1 point."
+      },
+      "effect": {
+        "points": -1
+      }
+    },
+    {
+      "id": "malus-8",
+      "deck": "malus",
+      "title": {
+        "en": "New phone again",
+        "fr": "Encore un nouveau téléphone"
+      },
+      "text": {
+        "en": "Move back 4 squares.",
+        "fr": "Recule de 4 cases."
+      },
+      "effect": {
+        "move": -4
+      }
+    },
+    {
+      "id": "malus-9",
+      "deck": "malus",
+      "title": {
+        "en": "Silent planet",
+        "fr": "Planète silencieuse"
+      },
+      "text": {
+        "en": "Next turn, your team can only speak English!",
+        "fr": "Au prochain tour, ton équipe ne parle qu’anglais !"
+      },
+      "effect": {}
+    },
+    {
+      "id": "malus-10",
+      "deck": "malus",
+      "title": {
+        "en": "Lights on",
+        "fr": "Lumières allumées"
+      },
+      "text": {
+        "en": "Lose 1 point and move back 1 square.",
+        "fr": "Perds 1 point et recule d’1 case."
+      },
+      "effect": {
+        "points": -1,
+        "move": -1
+      }
+    },
+    {
+      "id": "malus-11",
+      "deck": "malus",
+      "title": {
+        "en": "Dripping tap",
+        "fr": "Robinet qui fuit"
+      },
+      "text": {
+        "en": "Your team loses 1 point.",
+        "fr": "Ton équipe perd 1 point."
+      },
+      "effect": {
+        "points": -1
+      }
+    },
+    {
+      "id": "malus-12",
+      "deck": "malus",
+      "title": {
+        "en": "Plastic picnic",
+        "fr": "Pique-nique plastique"
+      },
+      "text": {
+        "en": "Move back 2 squares.",
+        "fr": "Recule de 2 cases."
+      },
+      "effect": {
+        "move": -2
+      }
+    },
+    {
+      "id": "malus-13",
+      "deck": "malus",
+      "title": {
+        "en": "Lights all night",
+        "fr": "Lumières toute la nuit"
+      },
+      "text": {
+        "en": "Skip your next turn.",
+        "fr": "Passe ton prochain tour."
+      },
+      "effect": {
+        "skipTurn": true
+      }
+    },
+    {
+      "id": "malus-14",
+      "deck": "malus",
+      "title": {
+        "en": "Heatwave",
+        "fr": "Canicule"
+      },
+      "text": {
+        "en": "Your team loses 2 points.",
+        "fr": "Ton équipe perd 2 points."
+      },
+      "effect": {
+        "points": -2
       }
     }
   ]

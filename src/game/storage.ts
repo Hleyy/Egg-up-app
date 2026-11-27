@@ -1,7 +1,7 @@
-import { isGameState } from './reducer'
+import { isGameState } from './setup'
 import type { GameState } from './types'
 
-const KEY = 'eggup:game:v1'
+const KEY = 'eggup:game:v3'
 
 export function loadGame(): GameState | null {
   try {
@@ -18,6 +18,5 @@ export function saveGame(game: GameState | null): void {
   try {
     if (game) localStorage.setItem(KEY, JSON.stringify(game))
     else localStorage.removeItem(KEY)
-  } catch {
-  }
+  } catch {}
 }

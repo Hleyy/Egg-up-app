@@ -1,53 +1,27 @@
-import {
-  DIE_FACES,
-  POINTS_PER_CORRECT_ANSWER,
-  canHatch,
-  otherTeam,
-  TEAM_IDS,
-} from './rules'
-import type { CardEffect, GameEvent, GameSetup, GameState, MalusEffect, TeamId, Timer } from './types'
+import { findCard } from '../data/cards'
+import { squareTypeAt } from '../data/board'
+import { DIE_FACES, POINTS, questionSquare } from './rules'
+import { applyEffect, checkHatchNow, clampInt, draw, finish, log, milestones, movePawn, next, removeOnce, stopTimer, updateTeam } from './flow'
+import { currentPlayer, pawnOf, remainingMs, teamCanHatch } from './selectors'
+import type { DeckId, GameState, TeamId } from './types'
 
 export type GameAction =
-  | { type: 'roll'; value: number; now: number }
-  | { type: 'move'; team: TeamId; delta: number; now: number }
-  | { type: 'answer'; correct: boolean; bonus?: CardEffect | null; now: number }
+  | { type: 'roll'; dice: [number, number]; now: number }
+  | { type: 'fixMove'; delta: number; now: number }
+  | { type: 'land'; random: number; now: number }
+  | { type: 'answer'; correct: boolean; now: number }
+  | { type: 'challenge'; winner: TeamId | null; now: number }
+  | { type: 'bonus'; keep: boolean; now: number }
+  | { type: 'malus'; shield: boolean; now: number }
+  | { type: 'useKept'; team: TeamId; cardId: string; now: number }
+  | { type: 'continue'; now: number }
+  | { type: 'hatch'; now: number }
   | { type: 'adjustScore'; team: TeamId; delta: number; now: number }
-  | { type: 'endTurn'; now: number }
-  | { type: 'setTurn'; team: TeamId; now: number }
-  | { type: 'playMalus'; by: TeamId; cardId?: string | null; effect?: MalusEffect | null; now: number }
+  | { type: 'movePawn'; pawn: string; delta: number; now: number }
   | { type: 'pause'; now: number }
   | { type: 'resume'; now: number }
   | { type: 'tick'; now: number }
   | { type: 'abandon'; now: number }
-
-const LOG_LIMIT = 300
-
-export function createGame(setup: GameSetup, now: number, id = makeId()): GameState {
-  const name = (team: TeamId, fallback: string) => setup.teamNames[team].trim() || fallback
-  return {
-    version: 1,
-    id,
-    createdAt: now,
-    status: 'playing',
-    teams: {
-      red: { id: 'red', name: name('red', 'Red team'), score: 0, distance: 0 },
-      blue: { id: 'blue', name: name('blue', 'Blue team'), score: 0, distance: 0 },
-    },
-    turn: { team: setup.firstTeam, roll: null },
-    skipNext: [],
-    timer: { durationMs: setup.durationMinutes * 60_000, elapsedMs: 0, runningSince: now },
-    winner: null,
-    endReason: null,
-    malusSeq: 0,
-    lastMalus: null,
-    log: [{ kind: 'start', at: now, team: setup.firstTeam }],
-  }
-}
-
-export function remainingMs(timer: Timer, now: number): number {
-  const running = timer.runningSince === null ? 0 : Math.max(0, now - timer.runningSince)
-  return Math.max(0, timer.durationMs - timer.elapsedMs - running)
-}
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
   if (state.status === 'finished') return state
@@ -59,162 +33,143 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'tick':
       return state
-
-    case 'pause': {
+    case 'pause':
       if (state.status !== 'playing') return state
       return log({ ...state, status: 'paused', timer: stopTimer(state.timer, action.now) }, { kind: 'pause', at: action.now })
-    }
-
-    case 'resume': {
+    case 'resume':
       if (state.status !== 'paused') return state
-      return log(
-        { ...state, status: 'playing', timer: { ...state.timer, runningSince: action.now } },
-        { kind: 'resume', at: action.now },
-      )
-    }
-
+      return log({ ...state, status: 'playing', timer: { ...state.timer, runningSince: action.now } }, { kind: 'resume', at: action.now })
     case 'abandon':
       return finish(state, 'abandoned', null, action.now)
+    case 'adjustScore': {
+      const delta = Math.trunc(action.delta)
+      if (!delta) return state
+      const next = updateTeam(state, action.team, (t) => ({ ...t, score: Math.max(0, t.score + delta) }))
+      return checkHatchNow(log(next, { kind: 'fix', at: action.now, team: action.team, what: 'score', delta }))
+    }
+    case 'movePawn': {
+      const delta = Math.trunc(action.delta)
+      const pawn = state.pawns.find((p) => p.id === action.pawn)
+      if (!delta || !pawn) return state
+      const next = movePawn(state, pawn.id, delta)
+      return checkHatchNow(log(next, { kind: 'fix', at: action.now, team: pawn.team, what: 'pawn', delta }))
+    }
   }
 
   if (state.status !== 'playing') return state
 
+  const player = currentPlayer(state)
+  const phase = state.phase
+
   switch (action.type) {
     case 'roll': {
-      if (state.turn.roll !== null) return state
-      const value = clampInt(action.value, 1, DIE_FACES)
-      const team = state.turn.team
-      let next = log({ ...state, turn: { ...state.turn, roll: value } }, { kind: 'roll', at: action.now, team, value })
-      next = moveTeam(next, team, value, action.now, false)
-      return checkHatch(next, action.now)
+      if (phase.kind !== 'roll') return state
+      const dice: [number, number] = [clampInt(action.dice[0], 1, DIE_FACES), clampInt(action.dice[1], 1, DIE_FACES)]
+      const from = pawnOf(state, player).distance
+      const to = from + dice[0] + dice[1]
+      const next = movePawn(state, player.pawn, to - from)
+      return log({ ...next, phase: { kind: 'move', dice, from, to } }, { kind: 'roll', at: action.now, player: player.id, dice, from, to })
     }
 
-    case 'move': {
-      const delta = Math.trunc(action.delta)
-      if (delta === 0) return state
-      return checkHatch(moveTeam(state, action.team, delta, action.now, true), action.now)
+    case 'fixMove': {
+      if (phase.kind !== 'move') return state
+      const to = Math.max(0, phase.to + Math.trunc(action.delta))
+      if (to === phase.to) return state
+      return { ...movePawn(state, player.pawn, to - phase.to), phase: { ...phase, to } }
+    }
+
+    case 'land': {
+      if (phase.kind !== 'move') return state
+      if (teamCanHatch(state, player.team)) return { ...state, phase: { kind: 'hatch', team: player.team } }
+      const type = squareTypeAt(phase.to)
+      const square = questionSquare(type)
+      const deck: DeckId = square ? 'questions' : (type as 'bonus' | 'malus')
+      const [cardId, used] = draw(state, deck, action.random)
+      if (!cardId) return next({ ...state, phase: { kind: 'roll' } }, false, action.now)
+      const withUsed = { ...state, used: { ...state.used, [deck]: used } }
+      if (square) return { ...withUsed, phase: { kind: 'question', cardId, square } }
+      return { ...withUsed, phase: { kind: type as 'bonus' | 'malus', cardId } }
     }
 
     case 'answer': {
-      const team = state.turn.team
-      const bonus = action.correct ? (action.bonus ?? null) : null
-      const points = action.correct ? POINTS_PER_CORRECT_ANSWER + Math.trunc(bonus?.scoreDelta ?? 0) : 0
-      let next = updateTeam(state, team, (t) => ({ ...t, score: Math.max(0, t.score + points) }))
-      if (bonus?.moveDelta) next = moveTeam(next, team, Math.trunc(bonus.moveDelta), action.now, false)
-      next = log(next, { kind: 'answer', at: action.now, team, correct: action.correct, points, bonus })
-      next = checkHatch(next, action.now)
-      if (next.status === 'finished') return next
-      if (bonus?.extraTurn) return log({ ...next, turn: { team, roll: null } }, { kind: 'turn', at: action.now, team })
-      return passTurn(next, action.now)
+      if (phase.kind !== 'question') return state
+      const card = findCard(phase.cardId)
+      if (card?.category === 'challenge') return state
+      const points = action.correct ? POINTS[phase.square] : 0
+      let next = updateTeam(state, player.team, (t) => ({
+        ...t,
+        score: t.score + points,
+        right: t.right + (action.correct ? 1 : 0),
+        wrong: t.wrong + (action.correct ? 0 : 1),
+      }))
+      next = milestones(next, player.team, state.teams[player.team].score)
+      next = log(next, { kind: 'answer', at: action.now, player: player.id, team: player.team, cardId: phase.cardId, correct: action.correct, points })
+      return { ...next, phase: { kind: 'feedback', cardId: phase.cardId, square: phase.square, correct: action.correct, points, team: player.team } }
     }
 
-    case 'adjustScore': {
-      const delta = Math.trunc(action.delta)
-      if (delta === 0) return state
-      let next = updateTeam(state, action.team, (t) => ({ ...t, score: Math.max(0, t.score + delta) }))
-      next = log(next, { kind: 'score', at: action.now, team: action.team, delta })
-      return checkHatch(next, action.now)
-    }
-
-    case 'endTurn':
-      return passTurn(state, action.now)
-
-    case 'setTurn': {
-      if (action.team === state.turn.team) return state
-      return log({ ...state, turn: { team: action.team, roll: null } }, { kind: 'turn', at: action.now, team: action.team })
-    }
-
-    case 'playMalus': {
-      const target = otherTeam(action.by)
-      const effect = action.effect ?? null
-      let next: GameState = state
-      if (effect?.scoreDelta) {
-        const d = Math.trunc(effect.scoreDelta)
-        next = updateTeam(next, target, (t) => ({ ...t, score: Math.max(0, t.score + d) }))
+    case 'challenge': {
+      if (phase.kind !== 'question') return state
+      const winner = action.winner
+      const points = winner ? POINTS.challenge : 0
+      let next = state
+      if (winner) {
+        next = updateTeam(next, winner, (t) => ({ ...t, score: t.score + points, challenges: t.challenges + 1 }))
+        next = milestones(next, winner, state.teams[winner].score)
       }
-      if (effect?.moveDelta) next = moveTeam(next, target, Math.trunc(effect.moveDelta), action.now, false)
-      if (effect?.skipTurn && !next.skipNext.includes(target)) next = { ...next, skipNext: [...next.skipNext, target] }
-      const event: Extract<GameEvent, { kind: 'malus' }> = {
-        kind: 'malus',
-        at: action.now,
-        by: action.by,
-        target,
-        cardId: action.cardId ?? null,
-        effect,
+      next = log(next, { kind: 'challenge', at: action.now, player: player.id, cardId: phase.cardId, winner, points })
+      return { ...next, phase: { kind: 'feedback', cardId: phase.cardId, square: phase.square, correct: winner !== null, points, team: winner } }
+    }
+
+    case 'bonus': {
+      if (phase.kind !== 'bonus') return state
+      const card = findCard(phase.cardId)
+      const keep = action.keep && !!card?.keep
+      let nextState = log(state, { kind: 'bonus', at: action.now, player: player.id, team: player.team, cardId: phase.cardId, kept: keep })
+      if (keep) {
+        nextState = updateTeam(nextState, player.team, (t) => ({ ...t, kept: [...t.kept, phase.cardId] }))
+        return next(nextState, false, action.now)
       }
-      next = log({ ...next, malusSeq: next.malusSeq + 1, lastMalus: event }, event)
-      return checkHatch(next, action.now)
+      const [applied, again] = applyEffect(nextState, player, card?.effect)
+      return next(applied, again, action.now)
+    }
+
+    case 'malus': {
+      if (phase.kind !== 'malus') return state
+      const card = findCard(phase.cardId)
+      const shieldId = state.teams[player.team].kept.find((id) => findCard(id)?.effect?.shield)
+      const shielded = action.shield && !!shieldId
+      let nextState = log(state, { kind: 'malus', at: action.now, player: player.id, team: player.team, cardId: phase.cardId, shielded })
+      if (shielded) {
+        nextState = updateTeam(nextState, player.team, (t) => ({ ...t, kept: removeOnce(t.kept, shieldId!) }))
+        return next(nextState, false, action.now)
+      }
+      const [applied] = applyEffect(nextState, player, card?.effect)
+      return next(applied, false, action.now)
+    }
+
+    case 'useKept': {
+      if (phase.kind !== 'roll' || action.team !== player.team) return state
+      const team = state.teams[action.team]
+      if (!team.kept.includes(action.cardId)) return state
+      const card = findCard(action.cardId)
+      if (!card?.effect || card.effect.shield) return state
+      let nextState = updateTeam(state, action.team, (t) => ({ ...t, kept: removeOnce(t.kept, action.cardId) }))
+      nextState = log(nextState, { kind: 'bonus', at: action.now, player: player.id, team: action.team, cardId: action.cardId, kept: false })
+      const [applied, again] = applyEffect(nextState, player, card.effect)
+      const withRoll = again ? { ...applied, bonusRoll: true } : applied
+      if (!withRoll.queue.length) return withRoll
+      const [head, ...rest] = withRoll.queue
+      return { ...withRoll, phase: head, queue: [...rest, { kind: 'roll' }] }
+    }
+
+    case 'continue': {
+      if (phase.kind === 'feedback' || phase.kind === 'evolve' || phase.kind === 'spring') return next(state, false, action.now)
+      return state
+    }
+
+    case 'hatch': {
+      if (phase.kind !== 'hatch') return state
+      return finish(state, 'hatched', phase.team, action.now)
     }
   }
 }
-
-function passTurn(state: GameState, now: number): GameState {
-  let team = otherTeam(state.turn.team)
-  let skipNext = state.skipNext
-  if (skipNext.includes(team)) {
-    skipNext = skipNext.filter((t) => t !== team)
-    team = otherTeam(team)
-  }
-  return log({ ...state, skipNext, turn: { team, roll: null } }, { kind: 'turn', at: now, team })
-}
-
-function moveTeam(state: GameState, team: TeamId, delta: number, now: number, logIt: boolean): GameState {
-  const next = updateTeam(state, team, (t) => ({ ...t, distance: Math.max(0, t.distance + delta) }))
-  return logIt ? log(next, { kind: 'move', at: now, team, delta }) : next
-}
-
-function checkHatch(state: GameState, now: number): GameState {
-  const order = [state.turn.team, otherTeam(state.turn.team)]
-  for (const id of order) {
-    const t = state.teams[id]
-    if (canHatch(t.score, t.distance)) return finish(state, 'hatched', id, now)
-  }
-  return state
-}
-
-function finish(state: GameState, reason: GameState['endReason'] & string, winner: TeamId | null, now: number): GameState {
-  const timer = stopTimer(state.timer, now)
-  return log({ ...state, status: 'finished', timer, winner, endReason: reason }, { kind: 'end', at: now, reason, winner })
-}
-
-function stopTimer(timer: Timer, now: number): Timer {
-  if (timer.runningSince === null) return timer
-  const elapsedMs = Math.min(timer.durationMs, timer.elapsedMs + Math.max(0, now - timer.runningSince))
-  return { ...timer, elapsedMs, runningSince: null }
-}
-
-function updateTeam(state: GameState, id: TeamId, fn: (t: GameState['teams'][TeamId]) => GameState['teams'][TeamId]): GameState {
-  return { ...state, teams: { ...state.teams, [id]: fn(state.teams[id]) } }
-}
-
-function log(state: GameState, event: GameEvent): GameState {
-  const entries = [...state.log, event]
-  return { ...state, log: entries.length > LOG_LIMIT ? entries.slice(-LOG_LIMIT) : entries }
-}
-
-function clampInt(n: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, Math.round(n)))
-}
-
-function makeId(): string {
-  return typeof crypto !== 'undefined' && 'randomUUID' in crypto
-    ? crypto.randomUUID()
-    : Math.random().toString(36).slice(2)
-}
-
-export function isGameState(value: unknown): value is GameState {
-  if (!value || typeof value !== 'object') return false
-  const v = value as Partial<GameState>
-  return (
-    v.version === 1 &&
-    typeof v.id === 'string' &&
-    (v.status === 'playing' || v.status === 'paused' || v.status === 'finished') &&
-    !!v.teams &&
-    TEAM_IDS.every((id) => typeof v.teams?.[id]?.score === 'number' && typeof v.teams?.[id]?.distance === 'number') &&
-    !!v.timer &&
-    typeof v.timer.durationMs === 'number' &&
-    !!v.turn &&
-    Array.isArray(v.log)
-  )
-}
-
