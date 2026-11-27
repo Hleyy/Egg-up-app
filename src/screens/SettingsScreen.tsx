@@ -57,6 +57,9 @@ export function SettingsScreen() {
         <Row title={t('settings.sound')}>
           <Toggle label={t('settings.sound')} on={settings.sound} onChange={(sound) => update({ sound })} />
         </Row>
+        <Row title={t('settings.voice')}>
+          <Toggle label={t('settings.voice')} on={settings.voice} onChange={(voice) => update({ voice })} />
+        </Row>
         <Row title={t('settings.vibration')}>
           <Toggle label={t('settings.vibration')} on={settings.vibration} onChange={(vibration) => update({ vibration })} />
         </Row>

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Animal } from '../../components/animals/Animal'
 import { useTalk } from '../../components/animals/useTalk'
-import { CheckIcon, ClockIcon, CloseIcon, StarIcon } from '../../components/icons'
+import { CheckIcon, ClockIcon, CloseIcon, ReplayIcon, SlowIcon, StarIcon } from '../../components/icons'
 import { Burst } from '../../components/Burst'
 import { Avatar, Btn, PauseButton, Pill, Sheet, TopBar } from '../../components/ui'
 import { findCard } from '../../data/cards'
@@ -12,6 +12,9 @@ import { SEASON_COLOR, TEAM_COLOR } from '../../theme/colors'
 import { formatClock } from '../../lib/format'
 import { useGame } from '../../game/useGame'
 import { useSettings } from '../../settings/useSettings'
+import { animalOf, timingsOf } from '../../game/voices'
+
+const SLOW_RATE = 0.75
 
 const CATEGORY_COLOR: Record<Category, [string, string]> = {
   learn: ['#58CC02', '#58A700'],
@@ -57,6 +60,22 @@ function AnswerTimer({ running, resetKey }: { running: boolean; resetKey: string
   )
 }
 
+function Karaoke({ text, times, time }: { text: string; times?: number[]; time: number | null }) {
+  const words = text.split(' ')
+  if (!times || times.length !== words.length || time === null) return <>{text}</>
+  const current = times.findLastIndex((start) => start <= time)
+  return (
+    <>
+      {words.map((word, i) => (
+        <span key={i} className={`transition-colors duration-150 ${i === current ? 'text-blue' : i > current ? 'text-ink/40' : ''}`}>
+          {word}
+          {i < words.length - 1 ? ' ' : ''}
+        </span>
+      ))}
+    </>
+  )
+}
+
 function SeasonWindow({
   season,
   host,
@@ -64,6 +83,7 @@ function SeasonWindow({
   speech,
   cue,
   cueKey,
+  replay,
 }: {
   season: Season
   host: AnimalId
@@ -71,17 +91,39 @@ function SeasonWindow({
   speech: ReturnType<typeof useTalk>
   cue: 'ask' | 'correct' | 'wrong'
   cueKey: string
+  replay?: (rate?: number) => void
 }) {
+  const { t } = useSettings()
   return (
     <div className="relative mt-4 aspect-[358/250] w-full overflow-hidden rounded-[24px] shadow-[inset_0_0_0_2px_rgba(255,255,255,.7),0_4px_0_#e5e5e5]">
       <div className="absolute inset-0 scale-110 bg-cover bg-[center_65%]" style={{ backgroundImage: `url(/decors/${season}.webp)` }} />
       <Animal animal={host} talking={speech.talking} viseme={speech.viseme} cue={cue} cueKey={cueKey} className="absolute bottom-[-4%] left-[3%] w-[40%]" />
       <div className="anim-pop text-ink absolute top-[7%] right-[3%] w-[56%] rounded-[20px] bg-white px-4 py-3 text-left text-[clamp(15px,4.3vw,18px)] leading-snug shadow-[inset_0_0_0_2px_#e5e5e5,0_4px_0_#e5e5e5]">
-        {card.text.en}
+        <Karaoke text={card.text.en} times={timingsOf(card.id)} time={speech.time} />
         <svg className="absolute top-[45%] -left-[11px]" width="14" height="22" viewBox="0 0 14 22" aria-hidden="true">
           <path d="M14 1 L2 11 L14 21Z" fill="#fff" />
           <path d="M13 1 L2 11 L13 21" fill="none" stroke="#e5e5e5" strokeWidth="2" strokeLinejoin="round" />
         </svg>
+        {replay && (
+          <div className="absolute -right-1 -bottom-5 flex gap-1.5">
+            <button
+              type="button"
+              aria-label={t('question.slow')}
+              onClick={() => replay(SLOW_RATE)}
+              className="text-blue flex size-10 items-center justify-center rounded-full bg-white shadow-[inset_0_0_0_2px_#e5e5e5,0_3px_0_#e5e5e5] active:translate-y-0.5 active:shadow-none"
+            >
+              <SlowIcon className="size-6" />
+            </button>
+            <button
+              type="button"
+              aria-label={t('question.replay')}
+              onClick={() => replay()}
+              className="text-blue flex size-10 items-center justify-center rounded-full bg-white shadow-[inset_0_0_0_2px_#e5e5e5,0_3px_0_#e5e5e5] active:translate-y-0.5 active:shadow-none"
+            >
+              <ReplayIcon className="size-5" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -90,7 +132,7 @@ function SeasonWindow({
 export function QuestionView() {
   const turn = useTurn()!
   const { game, player, season } = turn
-  const { t, settings, buzz, play } = useSettings()
+  const { t, settings, buzz, play, voice } = useSettings()
   const { answer, challenge, next } = useGame()
   const labels = useLabels()
   const speech = useTalk()
@@ -100,12 +142,13 @@ export function QuestionView() {
   const card = findCard(cardId)
   const say = speech.say
   const text = card?.text.en ?? ''
+  const src = cardId ? voice(cardId) : undefined
 
   useEffect(() => {
     if (phase.kind !== 'question' || !text) return
-    const id = window.setTimeout(() => say(text), 450)
+    const id = window.setTimeout(() => say(text, src), 450)
     return () => window.clearTimeout(id)
-  }, [cardId, text, say, phase.kind])
+  }, [cardId, text, src, say, phase.kind])
 
   if (!card || (phase.kind !== 'question' && phase.kind !== 'feedback')) return null
   const isChallenge = card.category === 'challenge'
@@ -155,7 +198,15 @@ export function QuestionView() {
         )}
       </div>
 
-      <SeasonWindow season={season} host={player.animal} card={card} speech={speech} cue={cue} cueKey={`${cardId}-${phase.kind}`} />
+      <SeasonWindow
+        season={season}
+        host={animalOf(card.id) ?? player.animal}
+        card={card}
+        speech={speech}
+        cue={cue}
+        cueKey={`${cardId}-${phase.kind}`}
+        replay={feedback || !src ? undefined : (rate) => say(text, src, rate)}
+      />
 
       {card.choices && (
         <ol className="mt-3 grid gap-2">

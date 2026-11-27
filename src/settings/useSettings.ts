@@ -9,6 +9,7 @@ export type Language = 'en' | 'fr'
 export interface Settings {
   language: Language
   sound: boolean
+  voice: boolean
   vibration: boolean
   answerTimer: boolean
   keepAwake: boolean
@@ -19,6 +20,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   language: 'en',
   sound: true,
+  voice: true,
   vibration: true,
   answerTimer: true,
   keepAwake: true,
@@ -42,6 +44,7 @@ export interface SettingsApi {
   t: TFunction
   buzz: (pattern?: number | number[]) => void
   play: (sound: Sound) => void
+  voice: (line: string) => string | undefined
 }
 
 export const SettingsContext = createContext<SettingsApi | null>(null)
@@ -59,6 +62,7 @@ export function loadSettings(): Settings {
       answerTimer: flag('answerTimer'),
       keepAwake: flag('keepAwake'),
       gameTimer: flag('gameTimer'),
+      voice: flag('voice'),
       timerMinutes: Math.min(MAX_TIMER_MINUTES, Math.max(MIN_TIMER_MINUTES, Number(saved?.timerMinutes) || DEFAULT_TIMER_MINUTES)),
     }
   } catch {

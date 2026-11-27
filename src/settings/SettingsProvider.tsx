@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { DEFAULT_SETTINGS, MESSAGES, SETTINGS_KEY, SettingsContext, loadSettings, translate, type Settings, type SettingsApi } from './useSettings'
 import { playSound } from './sounds'
+import { voiceUrl } from '../game/voices'
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(loadSettings)
@@ -28,6 +29,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       play: (sound) => {
         if (settings.sound) playSound(sound)
       },
+      voice: (line) => (settings.voice ? voiceUrl(line) : undefined),
     }
   }, [settings, update, reset])
 

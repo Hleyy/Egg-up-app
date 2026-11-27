@@ -16,7 +16,7 @@ import { useSettings } from '../settings/useSettings'
 type Rolls = Record<TeamId, [number, number] | null>
 
 export function WhoStartsScreen() {
-  const { t, settings, buzz, play } = useSettings()
+  const { t, settings, buzz, play, voice } = useSettings()
   const { newGame } = useGame()
   const navigate = useNavigate()
   const [draft] = useState(() => loadDraft({ mode: 'teams', teams: null as never }))
@@ -38,11 +38,12 @@ export function WhoStartsScreen() {
 
   const say = speech.say
   const spoken = winner ? t('starts.hostStarts', { team: t(`team.${winner}`), name: firstName }) : ''
+  const src = winner ? voice(`start-${winner}`) : undefined
   useEffect(() => {
     if (!spoken) return
-    const id = window.setTimeout(() => say(spoken), 900)
+    const id = window.setTimeout(() => say(spoken, src), 900)
     return () => window.clearTimeout(id)
-  }, [spoken, say])
+  }, [spoken, src, say])
 
   if (!draft?.teams) return <Navigate to="/setup" replace />
 
