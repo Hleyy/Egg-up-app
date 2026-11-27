@@ -30,10 +30,12 @@ const LETTER_VISEME: Record<string, number> = {
 }
 
 const CHAR_MS = 62
+const VOICE_MS = 50
 
 export function useTalk() {
   const [talking, setTalking] = useState(false)
   const [viseme, setViseme] = useState(0)
+  const [time, setTime] = useState<number | null>(null)
   const timer = useRef<number | null>(null)
   const audio = useRef<HTMLAudioElement | null>(null)
 
@@ -55,6 +57,7 @@ export function useTalk() {
     stopAudio()
     setTalking(false)
     setViseme(0)
+    setTime(null)
   }, [])
 
   const animate = useCallback(
@@ -63,6 +66,11 @@ export function useTalk() {
       let pos = 0
       const started = performance.now()
       timer.current = window.setInterval(() => {
+        const voice = audio.current
+        if (voice?.duration) {
+          pos = Math.floor((voice.currentTime / voice.duration) * value.length)
+          setTime(voice.currentTime * 1000)
+        }
         const ch = value[pos]?.toLowerCase() ?? ''
         pos += 1
         setViseme(ch in LETTER_VISEME ? LETTER_VISEME[ch] : 0)
@@ -88,7 +96,7 @@ export function useTalk() {
       }
       voice.onloadedmetadata = () => {
         const ms = (voice.duration * 1000) / rate
-        if (Number.isFinite(ms)) animate(value, Math.max(40, ms / Math.max(1, value.length)), ms + 400)
+        if (Number.isFinite(ms)) animate(value, VOICE_MS, ms + 400)
       }
       voice.onended = () => audio.current === voice && stop()
       voice.onerror = fail
@@ -99,5 +107,5 @@ export function useTalk() {
 
   useEffect(() => stop, [stop])
 
-  return { talking, viseme, say, stop }
+  return { talking, viseme, time, say, stop }
 }

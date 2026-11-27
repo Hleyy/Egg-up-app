@@ -12,7 +12,7 @@ import { SEASON_COLOR, TEAM_COLOR } from '../../theme/colors'
 import { formatClock } from '../../lib/format'
 import { useGame } from '../../game/useGame'
 import { useSettings } from '../../settings/useSettings'
-import { animalOf } from '../../game/voices'
+import { animalOf, timingsOf } from '../../game/voices'
 
 const SLOW_RATE = 0.75
 
@@ -60,6 +60,22 @@ function AnswerTimer({ running, resetKey }: { running: boolean; resetKey: string
   )
 }
 
+function Karaoke({ text, times, time }: { text: string; times?: number[]; time: number | null }) {
+  const words = text.split(' ')
+  if (!times || times.length !== words.length || time === null) return <>{text}</>
+  const current = times.findLastIndex((start) => start <= time)
+  return (
+    <>
+      {words.map((word, i) => (
+        <span key={i} className={`transition-colors duration-150 ${i === current ? 'text-blue' : i > current ? 'text-ink/40' : ''}`}>
+          {word}
+          {i < words.length - 1 ? ' ' : ''}
+        </span>
+      ))}
+    </>
+  )
+}
+
 function SeasonWindow({
   season,
   host,
@@ -83,7 +99,7 @@ function SeasonWindow({
       <div className="absolute inset-0 scale-110 bg-cover bg-[center_65%]" style={{ backgroundImage: `url(/decors/${season}.webp)` }} />
       <Animal animal={host} talking={speech.talking} viseme={speech.viseme} cue={cue} cueKey={cueKey} className="absolute bottom-[-4%] left-[3%] w-[40%]" />
       <div className="anim-pop text-ink absolute top-[7%] right-[3%] w-[56%] rounded-[20px] bg-white px-4 py-3 text-left text-[clamp(15px,4.3vw,18px)] leading-snug shadow-[inset_0_0_0_2px_#e5e5e5,0_4px_0_#e5e5e5]">
-        {card.text.en}
+        <Karaoke text={card.text.en} times={timingsOf(card.id)} time={speech.time} />
         <svg className="absolute top-[45%] -left-[11px]" width="14" height="22" viewBox="0 0 14 22" aria-hidden="true">
           <path d="M14 1 L2 11 L14 21Z" fill="#fff" />
           <path d="M13 1 L2 11 L13 21" fill="none" stroke="#e5e5e5" strokeWidth="2" strokeLinejoin="round" />
